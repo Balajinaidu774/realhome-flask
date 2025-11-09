@@ -3,6 +3,7 @@
 <head>
     <title>Buy Properties in Bangalore - RealHome</title>
     <style>
+        /* All your CSS styles remain unchanged */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0; padding: 0; background-color: #f8f9fb; color: #333;
@@ -21,7 +22,7 @@
         nav li { margin-left: 25px; }
         nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
         nav a:hover, nav a.active { color: #1a73e8; }
-        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons { display: flex; gap: 10px; align-items: center; }
         .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
         .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
         .login-btn:hover { background-color: #1a73e8; color: white; }
@@ -63,20 +64,30 @@
         .listing-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
         .listing-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
         .listing-card-content { padding: 20px; }
-        .listing-card-content h3 { font-size: 1.8em; margin-top: 0; margin-bottom: 10px; color: #005a9e; }
+        .listing-card-content h3 { 
+            font-size: 1.5em; /* Slightly smaller for long addresses */
+            margin-top: 0; margin-bottom: 10px; color: #005a9e; 
+            /* Prevent long text from breaking layout */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .listing-card-content .price { font-size: 1.5em; font-weight: 700; color: #333; margin-bottom: 15px; }
         .listing-card-content .details { font-size: 1em; color: #555; margin-bottom: 15px; }
-        .listing-card-content .address { font-size: 0.95em; color: #777; }
+        .listing-card-content .address { 
+            font-size: 0.95em; color: #777; 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         footer {
             background-color: #333; color: #aaa; text-align: center;
             padding: 30px 20px; margin-top: 40px;
         }
-        /* New Styles for Property Detail View (Copied from Index.html's look) */
+        /* Detail View Styles */
         #property-details-view {
-            display: none; /* Initially hidden */
-            padding: 60px 0;
-            background-color: #fff;
-            margin-top: 40px;
+            display: none; padding: 60px 0;
+            background-color: #fff; margin-top: 40px;
             border-top: 2px solid #ddd;
         }
         #detail-title { font-size: 3em; color: #005a9e; margin-bottom: 10px; }
@@ -86,22 +97,15 @@
         .key-features { display: flex; gap: 15px; margin-top: 20px; }
         .feature-item { background-color: #e8f0fe; padding: 10px 15px; border-radius: 5px; font-weight: 600; color: #005a9e; }
         .cta-button {
-            display: inline-block;
-            padding: 15px 30px;
-            background-color: #fbbc05;
-            color: #333;
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: 700;
-            border-radius: 8px;
-            margin-top: 30px;
-            text-decoration: none;
+            display: inline-block; padding: 15px 30px;
+            background-color: #fbbc05; color: #333;
+            text-align: center; font-size: 1.2em;
+            font-weight: 700; border-radius: 8px;
+            margin-top: 30px; text-decoration: none;
             transition: background-color 0.3s;
         }
         .cta-button:hover { background-color: #e7a600; }
-        /* Style for the description and contact prompt */
         #detail-description { line-height: 1.6; color: #555; }
-        
     </style>
 </head>
 <body>
@@ -118,11 +122,17 @@
             </ul>
         </nav>
         <div class="auth-buttons" id="auth-buttons">
-            <a href="{{ url_for('login') }}" class="login-btn">Login</a>
-            <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            {% if current_user.is_authenticated %}
+                <span style="margin-right:10px; font-weight:600; color:#1a73e8;">
+                    Welcome, {{ current_user.username }}
+                </span>
+                <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+                <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            {% endif %}
         </div>
     </div>
-    
 </header>
 <section class="hero">
     <h1>Find Your Dream Home with RealHome</h1>
@@ -162,56 +172,39 @@
         <div class="container">
             <h2>Featured Properties for Sale</h2>
             <div class="listings-container">
+                <!--
+                FLASK-FIX: Replaced static content with a dynamic Jinja for loop.
+                This will loop over the 'properties' variable we passed from app.py
+                -->
+                {% for prop in properties %}
                 <article class="listing-card" 
                          onclick="showDetails(
-                            'Modern Villa in Whitefield', 
-                            '₹3.9 Cr', 
-                            '3 Beds | 3 Baths | 3,100 sqft', 
-                            'Whitefield, Bengaluru', 
-                            'https://sterlingdevelopers.com/assets/img/gal-1.webp'
+                            '{{ prop.property_type }} in {{ prop.city }}', 
+                            '${{ "{:,.0f}".format(prop.price) }}', 
+                            '{{ prop.bedrooms }} Beds | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft', 
+                            '{{ prop.address }}, {{ prop.city }}, {{ prop.state }}', 
+                            '{{ prop.image_url }}'
                          )">
-                    <img src="https://sterlingdevelopers.com/assets/img/gal-1.webp" alt="Modern Villa"> <div class="listing-card-content">
-                        <div class="price">₹3.9 Cr</div>
-                        <h3>Modern Villa in Whitefield</h3>
-                        <div class="details">3 Beds | 3 Baths | 3,100 sqft</div>
-                        <div class="address">Whitefield, Bengaluru</div>
-                    </div>
-                </article>
-                <article class="listing-card"
-                         onclick="showDetails(
-                            '3BHK Smart Apartment', 
-                            '₹1.1 Cr', 
-                            '3 Beds | 3 Baths | 1,600 sqft', 
-                            'Whitefield, Bengaluru', 
-                            'https://sowparnika.com/euphoria-in-the-east/images/eite-Front-1.jpg'
-                         )">
-                    <img src="https://sowparnika.com/euphoria-in-the-east/images/eite-Front-1.jpg" alt="Electronic City Apartment">
+                    <!-- Use a placeholder if image_url is missing -->
+                    <img src="{{ prop.image_url }}" alt="{{ prop.property_type }} in {{ prop.city }}"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Property+Image';">
                     <div class="listing-card-content">
-                        <div class="price">₹1.1 Cr</div>
-                        <h3>3BHK Smart Apartment</h3>
-                        <div class="details">3 Beds | 3 Baths | 1,600 sqft</div>
-                        <div class="address">Whitefield, Bengaluru</div>
+                        <div class="price">${{ "{:,.0f}".format(prop.price) }}</div>
+                        <h3>{{ prop.property_type }} in {{ prop.city }}</h3>
+                        <div class="details">{{ prop.bedrooms }} Beds | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft</div>
+                        <div class="address">{{ prop.address }}, {{ prop.city }}</div>
                     </div>
                 </article>
-                <article class="listing-card"
-                         onclick="showDetails(
-                            'Residential Plot in Whitefield', 
-                            '₹85 Lakh', 
-                            '2,400 sqft | Gated Community | North Facing', 
-                            'Whitefield, Bengaluru', 
-                            'https://www.click.in/classifieds/images/99/13_6_2014_09_18_57_vpttfr5nrfe118eq1dcqkrtj91_t0hisjhjz.jpeg'
-                         )">
-                    <img src="https://www.click.in/classifieds/images/99/13_6_2014_09_18_57_vpttfr5nrfe118eq1dcqkrtj91_t0hisjhjz.jpeg" alt="Sarjapur Plot">
-                    <div class="listing-card-content">
-                        <div class="price">₹85 Lakh</div>
-                        <h3>Residential Plot in Whitefield</h3>
-                        <div class="details">2,400 sqft | Gated Community | North Facing</div>
-                        <div class="address">Whitefield, Bengaluru</div>
-                    </div>
-                </article>
+                {% else %}
+                <p>No properties found for sale at this time.</p>
+                {% endfor %}
+                <!-- End of dynamic content -->
             </div>
-            </div>
+        </div>
     </main>
+    
+    <!-- This "Recently Added" section still has static content. -->
+    <!-- You could create a second dynamic loop here if you wanted. -->
     <section class="listings-section" style="background-color: #ffffff;">
         <div class="container">
             <h2>Recently Added Properties</h2>
@@ -253,6 +246,7 @@
         </div>
     </section>
 
+    <!-- This detail view will be populated by the JavaScript function -->
     <section id="property-details-view">
         <div class="container">
             <button onclick="hideDetails()" class="cta-button" style="background-color: #ccc; float: right; margin-top: -20px; border: none; cursor: pointer;">Close [X]</button>
@@ -285,64 +279,37 @@
         </div>
     </footer>
     <script>
-        // Function to show the details section and populate it with data (Copied from index.html)
+        // This JavaScript remains to power the pop-up detail view
         function showDetails(title, price, details, address, image) {
             const detailsView = document.getElementById('property-details-view');
             const parts = details.split('|').map(p => p.trim());
 
-            // 1. Populate Content
             document.getElementById('detail-title').textContent = title;
             document.getElementById('detail-price').textContent = price;
             document.getElementById('detail-address').textContent = address;
             document.getElementById('detail-image').src = image;
 
-            // 2. Populate Features (The first three parts of the details string)
             document.getElementById('feature-beds').textContent = parts[0] || 'N/A Beds';
             document.getElementById('feature-baths').textContent = parts.length > 1 ? parts[1] : 'N/A Baths';
             document.getElementById('feature-area').textContent = parts.length > 2 ? parts[2] : 'N/A sqft';
             
-            // 3. Create a dynamic description (Ensures all details are used)
             const detailText = parts.join(', ');
             document.getElementById('detail-description').textContent = 
                 `This premium property, "${title}", is located in ${address} and listed for ${price}. 
-                It features ${detailText}. This home is ready to move in and offers excellent connectivity and modern amenities. Contact us using the link below for more information or to schedule a viewing.`;
+                It features ${detailText}. Contact us using the link below for more information.`;
 
-
-            // 4. Show the section and scroll to it
             detailsView.style.display = 'block';
             detailsView.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Function to hide the details section (Copied from index.html)
         function hideDetails() {
             document.getElementById('property-details-view').style.display = 'none';
         }
         
-        // Search form handler (Updated to include possession status)
+        // Search form handler
         document.getElementById('search-form').addEventListener('submit', e => {
             e.preventDefault();
-            const loc = document.getElementById('location').value || 'Any';
-            const type = document.getElementById('property-type').value;
-            const bedrooms = document.getElementById('bedrooms').value; 
-            const price = document.getElementById('price-range').value;
-            const possession = document.getElementById('possession-status').value; // NEW
-
-            alert(`Searching Buy Listings:\nLocation: ${loc}\nType: ${type}\nBHK: ${bedrooms}\nPrice: ${price}\nPossession: ${possession}`); // ALERT UPDATED
-        });
-        
-        // Auth header script (Handles Welcome/Logout)
-        document.addEventListener('DOMContentLoaded', () => {
-            const authButtons = document.getElementById('auth-buttons');
-            const username = localStorage.getItem('username');
-            if (username) {
-                authButtons.innerHTML = `
-                    <span style="margin-right:10px; font-weight:600; color:#1a73e8;">Welcome, ${username}</span>
-                    <a href="#" class="login-btn" id="logout-btn">Logout</a>`;
-                document.getElementById('logout-btn').addEventListener('click', () => {
-                    localStorage.removeItem('username');
-                    location.reload();
-                });
-            }
+            alert('Search functionality is not yet connected to the dynamic database.');
         });
     </script>
 </body>

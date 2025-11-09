@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>RealHome </title>
+    <title>RealHome</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -56,20 +56,25 @@
             background-color: #ffffff; border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             overflow: hidden; transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer; /* Added cursor to indicate clickability */
+            cursor: pointer;
         }
         .listing-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
         .listing-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
         .listing-card-content { padding: 20px; }
-        .listing-card-content h3 { font-size: 1.8em; margin: 0 0 10px; color: #005a9e; }
+        .listing-card-content h3 { 
+            font-size: 1.5em; margin: 0 0 10px; color: #005a9e;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
         .listing-card-content .price { font-size: 1.5em; font-weight: 700; color: #333; margin-bottom: 10px; }
         .listing-card-content .details { color: #555; margin-bottom: 10px; }
-        .listing-card-content .address { color: #777; }
+        .listing-card-content .address { 
+            color: #777;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
         
-        /* STYLES FOR THE IN-PAGE DETAIL VIEW (NEW) */
+        /* STYLES FOR THE IN-PAGE DETAIL VIEW */
         #property-details-view {
-            display: none; /* Initially hidden */
-            padding: 60px 0;
+            display: none; padding: 60px 0;
             background-color: #fff;
             margin-top: 40px;
             border-top: 2px solid #ddd;
@@ -112,15 +117,17 @@
             </ul>
         </nav>
         <div class="auth-buttons" id="auth-buttons">
-            <!-- FLASK-FIX: This block now uses Jinja logic from Flask-Login -->
+            <!-- 
+              THIS IS THE FIX:
+              This code checks the server-side login status.
+              The old localStorage script is GONE.
+            -->
             {% if current_user.is_authenticated %}
-                <!-- If user is logged in -->
                 <span style="margin-right:10px; font-weight:600; color:#1a73e8;">
                     Welcome, {{ current_user.username }}
                 </span>
                 <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
             {% else %}
-                <!-- If user is logged out -->
                 <a href="{{ url_for('login') }}" class="login-btn">Login</a>
                 <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
             {% endif %}
@@ -152,59 +159,34 @@
 </section>
 <section class="listings-section">
     <div class="container">
-        <h2>Featured Properties </h2>
+        <h2>Featured Properties</h2>
         <div class="listings-container">
+            <!-- 
+              THIS IS THE FIX:
+              Loop over the 3 properties we passed from app.py
+            -->
+            {% for prop in properties %}
             <article 
                 class="listing-card"
                 onclick="showDetails(
-                    'Luxury Villa in Whitefield', 
-                    '₹4.5 Cr', 
-                    '3 Beds | 2 Baths | 3,200 sqft', 
-                    'Whitefield, Bengaluru', 
-                    'https://wallpaperaccess.com/full/1408798.jpg'
+                    '{{ prop.property_type }} in {{ prop.city }}', 
+                    '${{ "{:,.0f}".format(prop.price) }}', 
+                    '{{ prop.bedrooms }} Beds | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft', 
+                    '{{ prop.address }}, {{ prop.city }}, {{ prop.state }}', 
+                    '{{ prop.image_url }}'
                 )">
-                <img src="https://wallpaperaccess.com/full/1408798.jpg" alt="Luxury Villa">
+                <img src="{{ prop.image_url }}" alt="{{ prop.property_type }}"
+                     onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Property+Image';">
                 <div class="listing-card-content">
-                    <div class="price">₹4.5 Cr</div>
-                    <h3>Luxury Villa in Whitefield</h3>
-                    <div class="details">3 Beds | 2 Baths | 3,200 sqft</div>
-                    <div class="address">Whitefield, Bengaluru</div>
+                    <div class="price">${{ "{:,.0f}".format(prop.price) }}</div>
+                    <h3>{{ prop.property_type }} in {{ prop.city }}</h3>
+                    <div class="details">{{ prop.bedrooms }} Beds | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft</div>
+                    <div class="address">{{ prop.address }}, {{ prop.city }}</div>
                 </div>
             </article>
-            <article 
-                class="listing-card"
-                onclick="showDetails(
-                    'Modern Apartment in Whitefield', 
-                    '₹1.2 Cr', 
-                    '2 Beds | 2 Baths | 1,400 sqft', 
-                    'Whitefield, Bengaluru', 
-                    'https://is1-3.housingcdn.com/01c16c28/da52ddb142a7e08d4b12973d28bc86d0/v0/medium/3_bhk_apartment-for-sale-whitefield-Bangalore-others.jpg'
-                )">
-                <img src="https://is1-3.housingcdn.com/01c16c28/da52ddb142a7e08d4b12973d28bc86d0/v0/medium/3_bhk_apartment-for-sale-whitefield-Bangalore-others.jpg" alt="Flat in Whitefield">
-                <div class="listing-card-content">
-                    <div class="price">₹1.2 Cr</div>
-                    <h3>Modern Apartment in Whitefield</h3>
-                    <div class="details">2 Beds | 2 Baths | 1,400 sqft</div>
-                    <div class="address">Whitefield, Bengaluru</div>
-                </div>
-            </article>
-            <article 
-                class="listing-card"
-                onclick="showDetails(
-                    '2BHK in Whitefield (Rental)', 
-                    '₹35,000 / month', 
-                    '2 Beds | 2 Baths | 1,200 sqft', 
-                    'Whitefield, Bengaluru', 
-                    'https://www.ghar.tv/psubimages/pst21-0.jpg'
-                )">
-                <img src="https://www.ghar.tv/psubimages/pst21-0.jpg" alt="HSR Layout 2BHK">
-                <div class="listing-card-content">
-                    <div class="price">₹35,000 / month</div>
-                    <h3>2BHK in Whitefield</h3>
-                    <div class="details">2 Beds | 2 Baths | 1,200 sqft</div>
-                    <div class="address">Whitefield, Bengaluru</div>
-                </div>
-            </article>
+            {% else %}
+            <p>No featured properties to display. Run the seed.py script!</p>
+            {% endfor %}
         </div>
     </div>
 </section>
@@ -241,42 +223,33 @@
 </footer>
 
 <script>
-// Function to show the details section and populate it with data
-// This script is for page functionality and remains.
+// This JavaScript is for the pop-up detail view. It is correct.
 function showDetails(title, price, details, address, image) {
     const detailsView = document.getElementById('property-details-view');
     const parts = details.split('|').map(p => p.trim());
 
-    // 1. Populate Content
     document.getElementById('detail-title').textContent = title;
     document.getElementById('detail-price').textContent = price;
     document.getElementById('detail-address').textContent = address;
     document.getElementById('detail-image').src = image;
 
-    // 2. Populate Features (Assuming the parts are: Beds | Baths | Sqft)
     document.getElementById('feature-beds').textContent = parts[0] || 'N/A Beds';
     document.getElementById('feature-baths').textContent = parts[1] || 'N/A Baths';
     document.getElementById('feature-area').textContent = parts[2] || 'N/A sqft';
     
-    // 3. Create a dynamic description
     document.getElementById('detail-description').textContent = 
         `This premium property, "${title}", is located in ${address} and listed for ${price}. 
-        It features ${parts[0]}, ${parts[1]}, and a total area of ${parts[2]}. This home is ready to move in and offers excellent connectivity and modern amenities. Contact us using the link below for more information or to schedule a viewing.`;
+        It features ${parts.join(', ')}. Contact us using the link below for more information.`;
 
-
-    // 4. Show the section and scroll to it
     detailsView.style.display = 'block';
     detailsView.scrollIntoView({ behavior: 'smooth' });
 }
 
-// Function to hide the details section
 function hideDetails() {
     document.getElementById('property-details-view').style.display = 'none';
 }
 
-
-// FLASK-FIX: The 'DOMContentLoaded' script for auth-buttons
-// has been REMOVED. It is no longer needed.
+// THE OLD localStorage SCRIPT IS REMOVED
 </script>
 </body>
 </html>

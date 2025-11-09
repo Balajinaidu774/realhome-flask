@@ -3,6 +3,7 @@
 <head>
     <title>RealHome – Rent Properties in Bangalore</title>
     <style>
+        /* All your CSS styles remain unchanged */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0; padding: 0; background-color: #f8f9fb; color: #333;
@@ -22,7 +23,7 @@
         nav li { margin-left: 25px; }
         nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
         nav a:hover, nav a.active { color: #1a73e8; }
-        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons { display: flex; gap: 10px; align-items: center; }
         .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
         .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
         .login-btn:hover { background-color: #1a73e8; color: white; }
@@ -39,40 +40,29 @@
         .hero h1 { font-size: 3em; margin: 0 0 15px; }
         .hero p { font-size: 1.2em; margin-bottom: 30px; }
         #search-form {
-            background-color: rgba(255, 255, 255, 0.98); /* Slightly less transparent */
-            padding: 25px; /* Increased padding */
-            border-radius: 10px; /* More rounded corners */
+            background-color: rgba(255, 255, 255, 0.98);
+            padding: 25px; border-radius: 10px;
             display: flex; flex-wrap: wrap;
             justify-content: center; align-items: center;
-            gap: 12px; /* Reduced gap for tighter layout */
-            max-width: 950px; /* Increased max width */
-            margin: 0 auto;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15); /* Stronger shadow */
+            gap: 12px; max-width: 950px; margin: 0 auto;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
         #search-form input, #search-form select {
-            padding: 14px; /* Increased padding for better feel */
-            font-size: 1em;
-            border: 1px solid #ddd;
-            border-radius: 6px; /* Slightly more rounded */
-            flex: 1; 
-            min-width: 120px; /* Adjusted min width */
-            background-color: #f7f9fc; /* Light background for fields */
-            color: #333;
+            padding: 14px; font-size: 1em;
+            border: 1px solid #ddd; border-radius: 6px;
+            flex: 1; min-width: 120px;
+            background-color: #f7f9fc; color: #333;
         }
         #search-form button {
-            padding: 14px 28px;
-            font-size: 1em;
-            font-weight: 700; 
-            color: white;
-            background-color: #007bff; /* Brighter, more modern blue */
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
+            padding: 14px 28px; font-size: 1em;
+            font-weight: 700; color: white;
+            background-color: #007bff; border: none;
+            border-radius: 6px; cursor: pointer;
             transition: background-color 0.3s, transform 0.2s;
         }
         #search-form button:hover { background-color: #0056b3; transform: translateY(-1px); }
         
-        /* Listings Section Styles (Kept for consistency) */
+        /* Listings */
         .listings-section { padding: 60px 0; }
         .listings-section h2 {
             text-align: center; font-size: 2.5em;
@@ -94,17 +84,25 @@
         }
         .listing-card img { width: 100%; height: 220px; object-fit: cover; }
         .listing-card-content { padding: 20px; }
-        .listing-card-content h3 { font-size: 1.8em; margin: 0 0 10px; color: #005a9e; }
+        .listing-card-content h3 { 
+            font-size: 1.5em; margin: 0 0 10px; color: #005a9e;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .listing-card-content .price { font-size: 1.4em; font-weight: 700; color: #333; margin-bottom: 15px; }
         .listing-card-content .details { color: #555; margin-bottom: 15px; }
-        .listing-card-content .address { color: #777; }
+        .listing-card-content .address { 
+            color: #777;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         
-        /* STYLES FOR THE IN-PAGE DETAIL VIEW (Kept for consistency) */
+        /* Detail View Styles */
         #property-details-view {
-            display: none; 
-            padding: 60px 0;
-            background-color: #fff;
-            margin-top: 40px;
+            display: none; padding: 60px 0;
+            background-color: #fff; margin-top: 40px;
             border-top: 2px solid #ddd;
         }
         #detail-title { font-size: 3em; color: #005a9e; margin-bottom: 10px; }
@@ -114,16 +112,11 @@
         .key-features { display: flex; gap: 15px; margin-top: 20px; }
         .feature-item { background-color: #e8f0fe; padding: 10px 15px; border-radius: 5px; font-weight: 600; color: #005a9e; }
         .cta-button {
-            display: inline-block;
-            padding: 15px 30px;
-            background-color: #fbbc05;
-            color: #333;
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: 700;
-            border-radius: 8px;
-            margin-top: 30px;
-            text-decoration: none;
+            display: inline-block; padding: 15px 30px;
+            background-color: #fbbc05; color: #333;
+            text-align: center; font-size: 1.2em;
+            font-weight: 700; border-radius: 8px;
+            margin-top: 30px; text-decoration: none;
             transition: background-color 0.3s;
         }
         .cta-button:hover { background-color: #e7a600; }
@@ -148,8 +141,15 @@
             </ul>
         </nav>
         <div class="auth-buttons" id="auth-buttons">
-            <a href="{{ url_for('login') }}" class="login-btn">Login</a>
-            <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            {% if current_user.is_authenticated %}
+                <span style="margin-right:10px; font-weight:600; color:#1a73e8;">
+                    Welcome, {{ current_user.username }}
+                </span>
+                <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+                <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            {% endif %}
         </div>
     </div>
 </header>
@@ -167,58 +167,38 @@
     <div class="container">
         <h2>Featured Properties for Rent</h2>
         <div class="listings-container">
+            <!--
+            FLASK-FIX: Replaced static content with a dynamic Jinja for loop.
+            This will loop over the 'properties' variable we passed from app.py
+            -->
+            {% for prop in properties %}
             <article class="listing-card"
                      onclick="showDetails(
-                        'Fully-Furnished 2BHK', 
-                        '₹35,000 / month', 
-                        '2 Beds | 2 Baths | 1,300 sqft', 
-                        'Whitefield, Bengaluru', 
-                        'https://nammafamilybuilder.com/wp-content/uploads/2022/06/1.Realastic-view_11zon.jpg'
+                        '{{ prop.property_type }} in {{ prop.city }}', 
+                        '${{ "{:,.0f}".format(prop.price) }} / month', 
+                        '{{ prop.bedrooms }} Beds | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft', 
+                        '{{ prop.address }}, {{ prop.city }}, {{ prop.state }}', 
+                        '{{ prop.image_url }}'
                      )">
-                <img src="https://nammafamilybuilder.com/wp-content/uploads/2022/06/1.Realastic-view_11zon.jpg" alt="HSR Layout Apartment">
+                <img src="{{ prop.image_url }}" alt="{{ prop.property_type }} in {{ prop.city }}"
+                     onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Property+Image';">
                 <div class="listing-card-content">
-                    <div class="price">₹35,000 / month</div>
-                    <h3>Fully-Furnished 2BHK</h3>
-                    <div class="details">2 Beds | 2 Baths | 1,300 sqft</div>
-                    <div class="address">Whitefield, Bengaluru</div>
+                    <!-- Note: Formatting price as a monthly rental -->
+                    <div class="price">${{ "{:,.0f}".format(prop.price / 12) }} / month</div> 
+                    <h3>{{ prop.property_type }} in {{ prop.city }}</h3>
+                    <div class="details">{{ prop.bedrooms }} Beds | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft</div>
+                    <div class="address">{{ prop.address }}, {{ prop.city }}</div>
                 </div>
             </article>
-            <article class="listing-card"
-                     onclick="showDetails(
-                        'Modern 1RK Studio', 
-                        '₹18,000 / month', 
-                        '1 Bed | 1 Bath | 600 sqft', 
-                        'Whitefield, Bengaluru', 
-                        'https://www.houseplansdaily.com/uploads/images/202308/image_750x_64d24bfc3ac10.jpg'
-                     )">
-                <img src="https://www.houseplansdaily.com/uploads/images/202308/image_750x_64d24bfc3ac10.jpg" alt="Jayanagar Studio">
-                <div class="listing-card-content">
-                    <div class="price">₹18,000 / month</div>
-                    <h3>Modern 1RK Studio</h3>
-                    <div class="details">1 Bed | 1 Bath | 600 sqft | With Kitchenette</div>
-                    <div class="address">Whitefield, Bengaluru</div>
-                </div>
-            </article>
-            <article class="listing-card"
-                     onclick="showDetails(
-                        'Shared Room in PG (Gents)', 
-                        '₹9,000 / month', 
-                        'Shared | Food Included | Wi-Fi', 
-                        'Near Whitefield, Bengaluru', 
-                        'https://tse3.mm.bing.net/th/id/OIP.RqSDOkOoPalkvt2MUoHvwAHaFj?pid=Api&P=0&h=180'
-                     )">
-                <img src="https://tse3.mm.bing.net/th/id/OIP.RqSDOkOoPalkvt2MUoHvwAHaFj?pid=Api&P=0&h=180" alt="Shared Room/PG">
-                <div class="listing-card-content">
-                    <div class="price">₹9,000 / month</div>
-                    <h3>Shared Room in PG (Gents)</h3>
-                    <div class="details">2 Sharing | Food Included | Wi-Fi</div>
-                    <div class="address">Near Whitefield, Bengaluru</div>
-                </div>
-            </article>
+            {% else %}
+            <p>No properties found for rent at this time.</p>
+            {% endfor %}
+            <!-- End of dynamic content -->
         </div>
     </div>
 </main>
 
+<!-- The detail view remains, ready to be populated by JS -->
 <section id="property-details-view">
     <div class="container">
         <button onclick="hideDetails()" class="cta-button" style="background-color: #ccc; float: right; margin-top: -20px; border: none; cursor: pointer;">Close [X]</button>
@@ -232,11 +212,11 @@
             <div class="key-features">
                 <div class="feature-item" id="feature-beds"></div>
                 <div class="feature-item" id="feature-baths"></div>
-                <div class="feature-item" id="feature-area"></div>
+                <div class.item" id="feature-area"></div>
             </div>
         </div>
         
-        <div class="info-section">
+        <div class.section">
             <h3 style="color: #1a73e8; margin-top: 30px;">Property Description</h3>
             <p id="detail-description">Click a property card above to see the full details here.</p>
         </div>
@@ -252,77 +232,51 @@
 </footer>
 
 <script>
-// Function to show the details section and populate it with data (Copied from index.html)
+// This JavaScript remains to power the pop-up detail view
 function showDetails(title, price, details, address, image) {
     const detailsView = document.getElementById('property-details-view');
     const parts = details.split('|').map(p => p.trim());
 
-    // 1. Populate Content
     document.getElementById('detail-title').textContent = title;
     document.getElementById('detail-price').textContent = price;
     document.getElementById('detail-address').textContent = address;
     document.getElementById('detail-image').src = image;
 
-    // 2. Populate Features (Using the parts array for flexible rent details)
     document.getElementById('feature-beds').textContent = parts[0] || 'N/A';
     document.getElementById('feature-baths').textContent = parts.length > 1 ? parts[1] : 'N/A';
     document.getElementById('feature-area').textContent = parts.length > 2 ? parts[2] : 'N/A';
     
-    // 3. Create a dynamic description, including all provided details
+    const detailText = parts.join(', ');
     document.getElementById('detail-description').textContent = 
-        `This rental property, "${title}", is available in ${address} for ${price} per month. 
-        Key features include: ${parts.join(', ')}. This is a great opportunity for a comfortable living space. Contact us using the button below for immediate assistance or to schedule a viewing.`;
+        `This rental property, "${title}", is available in ${address} for ${price}. 
+        Key features include: ${detailText}. Contact us using the button below for immediate assistance.`;
 
-    // 4. Show the section and scroll to it
     detailsView.style.display = 'block';
     detailsView.scrollIntoView({ behavior: 'smooth' });
 }
 
-// Function to hide the details section (Copied from index.html)
 function hideDetails() {
     document.getElementById('property-details-view').style.display = 'none';
 }
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Get the new select elements
+    // This script for the search bar dropdowns remains
     const propertyTypeSelect = document.getElementById('property-type');
-    const bedroomsSelect = document.getElementById('bedrooms'); // NEW
+    const bedroomsSelect = document.getElementById('bedrooms');
     const priceRangeSelect = document.getElementById('price-range');
-    const furnishingSelect = document.getElementById('furnishing-status'); // NEW
+    const furnishingSelect = document.getElementById('furnishing-status');
     const searchForm = document.getElementById('search-form');
     
     const rentOptions = {
-        propertyTypes: {
-            all: 'Property Type',
-            apartment: 'Apartment/Flat',
-            house: 'Independent House',
-            villa: 'Villa',
-            pg: 'Shared Room / PG'
-        },
-        bedrooms: { // ADDED
-            all: 'BHK Type',
-            '1': '1 BHK',
-            '2': '2 BHK',
-            '3': '3 BHK',
-            '4plus': '4+ BHK / 3+ Rooms'
-        },
-        prices: {
-            all: 'Any Price',
-            '10k-20k': '₹10k - ₹20k / month',
-            '20k-40k': '₹20k - ₹40k / month',
-            '40k-plus': '₹40k+ / month'
-        },
-        furnishing: { // ADDED
-            all: 'Furnishing Status',
-            furnished: 'Fully Furnished',
-            semi: 'Semi Furnished',
-            unfurnished: 'Unfurnished'
-        }
+        propertyTypes: { all: 'Property Type', apartment: 'Apartment/Flat', house: 'Independent House', villa: 'Villa', pg: 'Shared Room / PG' },
+        bedrooms: { all: 'BHK Type', '1': '1 BHK', '2': '2 BHK', '3': '3 BHK', '4plus': '4+ BHK / 3+ Rooms' },
+        prices: { all: 'Any Price', '10k-20k': '₹10k - ₹20k / month', '20k-40k': '₹20k - ₹40k / month', '40k-plus': '₹40k+ / month' },
+        furnishing: { all: 'Furnishing Status', furnished: 'Fully Furnished', semi: 'Semi Furnished', unfurnished: 'Unfurnished' }
     };
     
     function updateDropdown(selectElement, options) {
+        if (!selectElement) return;
         selectElement.innerHTML = '';
         for (const value in options) {
             const option = document.createElement('option');
@@ -332,49 +286,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Initialize all dropdowns
     updateDropdown(propertyTypeSelect, rentOptions.propertyTypes);
-    updateDropdown(bedroomsSelect, rentOptions.bedrooms); // Initialise BHK
+    updateDropdown(bedroomsSelect, rentOptions.bedrooms);
     updateDropdown(priceRangeSelect, rentOptions.prices);
-    updateDropdown(furnishingSelect, rentOptions.furnishing); // Initialise Furnishing
+    updateDropdown(furnishingSelect, rentOptions.furnishing);
     
-    // Form submit handler (Updated to include new fields)
-    searchForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const location = document.getElementById('location').value;
-        const propertyType = propertyTypeSelect.value;
-        const bedrooms = bedroomsSelect.value; // NEW
-        const price = priceRangeSelect.value;
-        const furnishing = furnishingSelect.value; // NEW
-
-        alert(`Searching Rentals:\nLocation: ${location || 'Any'}\nType: ${propertyType}\nBHK: ${bedrooms}\nPrice Range: ${price}\nFurnishing: ${furnishing}`);
-    });
-
-    // ----------------------------------------------------
-    // Auth header script
-    // ----------------------------------------------------
-    const authButtons = document.getElementById('auth-buttons');
-    const username = localStorage.getItem('username');
-
-    if (username) {
-        authButtons.innerHTML = `
-            <span style="margin-right:10px; font-weight:600; color:#1a73e8;">Welcome, ${username}</span>
-            <a href="#" class="login-btn" id="logout-btn">Logout</a>
-        `;
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('username');
-            location.reload();
+    if (searchForm) {
+        searchForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Search functionality is not yet connected to the dynamic database.');
         });
     }
-
-    // Card click handler (to highlight the selected card)
-    const listingCards = document.querySelectorAll('.listing-card');
-    listingCards.forEach(card => {
-        card.addEventListener('click', function() {
-            listingCards.forEach(c => c.classList.remove('active'));
-            this.classList.add('active'); 
-        });
-    });
 });
 </script>
 </body>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login – RealHome</title>
     <style>
+        /* All your existing styles */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0; padding: 0; background-color: #f7f9fc; color: #333;
@@ -23,7 +24,6 @@
         nav a:hover, nav a.active { color: #111416; }
         .auth-section {
             display: flex; justify-content: center; align-items: center;
-            /* Adjusted height to be less extreme */
             min-height: calc(100vh - 160px); 
             padding: 60px 0;
             background: linear-gradient(135deg, #0e0303, #959da1);
@@ -53,13 +53,22 @@
             background-color: #333; color: #aaa; text-align: center;
             padding: 20px;
         }
+        /* STYLES FOR FLASH MESSAGES */
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .flash-success { background-color: #d4edda; color: #155724; }
+        .flash-danger { background-color: #f8d7da; color: #721c24; }
+        .flash-info { background-color: #d1ecf1; color: #0c5460; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="container">
-        <!-- FLASK-FIX: Updated hrefs to use url_for() -->
         <a href="{{ url_for('index') }}" class="logo">RealHome</a>
         <nav>
             <ul>
@@ -76,14 +85,30 @@
 <section class="auth-section">
     <div class="auth-box">
         <h2>Welcome Back!</h2>
-        <form id="login-form">
-            <input type="email" id="login-email" placeholder="Email" required>
-            <input type="password" id="login-password" placeholder="Password" required>
+
+        <!-- Code block to display flash messages from app.py -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- 
+          THIS IS THE FIX:
+          - method="POST" sends data to the server.
+          - name="email" and name="password" are keys for Flask.
+        -->
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="email" id="login-email" name="email" placeholder="Email" required>
+            <input type="password" id="login-password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>
         <div class="auth-footer">
             Don't have an account? 
-            <!-- FLASK-FIX: Updated href to use url_for() -->
             <a href="{{ url_for('signup') }}">Sign Up</a>
         </div>
     </div>
@@ -92,5 +117,8 @@
 <footer>
     <p>&copy; 2025 RealHome. All rights reserved.</p>
 </footer>
+
+<!-- THE OLD <script> TAG IS REMOVED. -->
+
 </body>
 </html>

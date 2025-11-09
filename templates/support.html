@@ -19,7 +19,7 @@
         nav li { margin-left: 25px; }
         nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
         nav a:hover, nav a.active { color: #1a73e8; }
-        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons { display: flex; gap: 10px; align-items: center; } /* Added align-items */
         .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
         .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
         .login-btn:hover { background-color: #1a73e8; color: white; }
@@ -72,78 +72,50 @@
         </nav>
         <!-- FIXED: Added the auth-buttons div to the header -->
         <div class="auth-buttons" id="auth-buttons">
-            <a href="{{ url_for('login') }}" class="login-btn">Login</a>
-            <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            <!-- FLASK-FIX: This block now uses Jinja logic from Flask-Login -->
+            {% if current_user.is_authenticated %}
+                <!-- If user is logged in -->
+                <span style="margin-right:10px; font-weight:600; color:#1a73e8;">
+                    Welcome, {{ current_user.username }}
+                </span>
+                <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
+            {% else %}
+                <!-- If user is logged out -->
+                <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+                <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            {% endif %}
         </div>
     </div>
 </header>
 <main>
     <section class="support-section">
         <h2>Customer Support</h2>
-        <!-- FIX: Added data-login-url attribute to pass URL to script -->
-        <form id="support-form" data-login-url="{{ url_for('login') }}">
-            <input type="text" id="name" placeholder="Your Name" required>
-            <input type="email" id="email" placeholder="Your Email" required>
+        <form id="support-form">
+            <!-- FLASK-FIX: Pre-fill user data from the server -->
+            <input type="text" id="name" placeholder="Your Name" value="{{ current_user.username }}" required>
+            <input type="email" id="email" placeholder="Your Email" value="{{ current_user.email }}" required>
             <textarea id="message" placeholder="Describe your issue..." required></textarea>
             <button type="submit">Submit Request</button>
         </form>
-        <!-- FIXED: Removed the duplicate red logout button -->
     </section>
 </main>
 <footer>
     <p>&copy; 2025 RealHome. All rights reserved.</p>
 </footer>
 <script>
-// FIXED: This script now correctly checks for 'username'
-// and pre-fills the form.
+// FLASK-FIX: The old login-check script is REMOVED.
+// The page is now protected by the server-side @login_required.
 
-// FIX: Get the URL from the form's data-attribute
-const supportForm = document.getElementById("support-form");
-// FIX: Check if supportForm exists before accessing dataset
-if (supportForm) {
-    const loginUrl = supportForm.dataset.loginUrl;
-
-    // 1. Check for the correct key: "username"
-    const loggedInUsername = localStorage.getItem("username");
-    // 2. Redirect if "username" is not found
-    if (!loggedInUsername) {
-        alert("Please log in to access customer support.");
-        // FLASK-FIX: Redirect using URL from data-attribute
-        window.location.href = loginUrl;
-    } else {
-        // 3. Pre-fill the name field
-        document.getElementById("name").value = loggedInUsername;
-        // We don't know the user's email from localStorage, so we leave it blank
-    }
-    // 4. Handle the form submission
-    supportForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        const name = document.getElementById("name").value;
-        alert(`Thanks, ${name}! Your support request has been submitted. We'll get back to you soon.`);
-        // Only reset the message field
-        document.getElementById("message").value = "";
-        document.getElementById("email").value = "";
-    });
-}
-// 5. The logic for the red logout button has been removed.
-</script>
-<script>
-// This is the standard header auth script from the other pages.
-// It will now work because the #auth-buttons div exists.
-document.addEventListener('DOMContentLoaded', () => {
-    const authButtons = document.getElementById('auth-buttons');
-    const username = localStorage.getItem('username');
-    if (username) {
-        authButtons.innerHTML = `
-            <span style="margin-right:10px; font-weight:600; color:#1a73e8;">Welcome, ${username}</span>
-            <a href="#" class="login-btn" id="logout-btn">Logout</a>
-        `;
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('username');
-            location.reload();
-        });
-    }
+// This script just handles the form submission alert.
+document.getElementById("support-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const name = document.getElementById("name").value;
+    alert(`Thanks, ${name}! Your support request has been submitted. We'll get back to you soon.`);
+    // Only reset the message field
+    document.getElementById("message").value = "";
 });
+
+// FLASK-FIX: The header auth script is REMOVED.
 </script>
 </body>
 </html>

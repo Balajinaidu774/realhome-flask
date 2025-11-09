@@ -20,7 +20,7 @@
         nav li { margin-left: 25px; }
         nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
         nav a:hover, nav a.active { color: #1a73e8; }
-        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons { display: flex; gap: 10px; align-items: center; } /* Added align-items */
         .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
         .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
         .login-btn:hover { background-color: #1a73e8; color: white; }
@@ -81,8 +81,18 @@
             </ul>
         </nav>
         <div class="auth-buttons" id="auth-buttons">
-            <a href="{{ url_for('login') }}" class="login-btn">Login</a>
-            <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            <!-- FLASK-FIX: This block now uses Jinja logic from Flask-Login -->
+            {% if current_user.is_authenticated %}
+                <!-- If user is logged in -->
+                <span style="margin-right:10px; font-weight:600; color:#1a73e8;">
+                    Welcome, {{ current_user.username }}
+                </span>
+                <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
+            {% else %}
+                <!-- If user is logged out -->
+                <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+                <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            {% endif %}
         </div>
     </div>
 </header>
@@ -139,24 +149,13 @@
 </footer>
 <script>
     // NEW FUNCTIONALITY: Display contact details on card click
+    // This function is needed for the page, so it stays.
     function showContactDetails(name, number) {
         alert(`Contact Details for ${name}:\nPhone: ${number}`);
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const authButtons = document.getElementById('auth-buttons');
-        const username = localStorage.getItem('username');
-        if (username) {
-            authButtons.innerHTML = `
-                <span style="margin-right:10px; font-weight:600; color:#1a73e8;">Welcome, ${username}</span>
-                <a href="#" class="login-btn" id="logout-btn">Logout</a>
-            `;
-            document.getElementById('logout-btn').addEventListener('click', () => {
-                localStorage.removeItem('username');
-                location.reload();
-            });
-        }
-    });
+    // FLASK-FIX: The 'DOMContentLoaded' script for auth-buttons
+    // has been REMOVED. It is no longer needed.
 </script>
 </body>
 </html>
