@@ -1,58 +1,192 @@
-<html>
 <head>
        <title>Customer Support – RealHome</title>
     <style>
+        /* ... all theme styles ... */
+        :root {
+            --color-bg: #f8f9fb;
+            --color-surface: #ffffff;
+            --color-text: #333;
+            --color-text-secondary: #555;
+            --color-heading: #005a9e;
+            --color-primary: #1a73e8;
+            --color-primary-hover: #155ab6;
+            --color-primary-text: #ffffff;
+            --color-border: #ddd;
+            --color-shadow: rgba(0, 0, 0, 0.08);
+            --color-footer-bg: #333;
+            --color-footer-text: #aaa;
+            --color-cta: #fbbc05;
+            --color-cta-text: #333;
+            --color-cta-hover: #e7a600;
+            --color-feature-bg: #e8f0fe;
+            --color-feature-text: #005a9e;
+            --color-flash-success-bg: #d4edda;
+            --color-flash-success-text: #155724;
+            --color-flash-danger-bg: #f8d7da;
+            --color-flash-danger-text: #721c24;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: #1a202c;
+                --color-surface: #2d3748;
+                --color-text: #e2e8f0;
+                --color-text-secondary: #a0aec0;
+                --color-heading: #63b3ed;
+                --color-primary: #63b3ed;
+                --color-primary-hover: #90cdf4;
+                --color-primary-text: #1a202c;
+                --color-border: #4a5568;
+                --color-shadow: rgba(0, 0, 0, 0.25);
+                --color-footer-bg: #2d3748;
+                --color-footer-text: #a0aec0;
+                --color-feature-bg: #2c3e50;
+                --color-feature-text: #a6d4fa;
+                --color-flash-success-bg: #2f4a39;
+                --color-flash-success-text: #b8f2d5;
+                --color-flash-danger-bg: #5a2c32;
+                --color-flash-danger-text: #fbcad1;
+            }
+        }
+        /* --- END THEME STYLES --- */
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 0; background-color: #f7f9fc; color: #333;
+            margin: 0; padding: 0; background-color: var(--color-bg); color: var(--color-text);
         }
         * { box-sizing: border-box; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        /* FIXED: Header styles now include auth-buttons */
+        
         header {
-            background-color: #fff; padding: 15px 0; border-bottom: 1px solid #ddd;
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background-color: var(--color-surface); padding: 15px 0; border-bottom: 1px solid var(--color-border);
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px var(--color-shadow);
         }
         header .container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.6em; font-weight: 700; color: #1a73e8; text-decoration: none; }
+        .logo { font-size: 1.6em; font-weight: 700; color: var(--color-primary); text-decoration: none; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
         nav li { margin-left: 25px; }
-        nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
-        nav a:hover, nav a.active { color: #1a73e8; }
-        .auth-buttons { display: flex; gap: 10px; align-items: center; } /* Added align-items */
+        nav a { text-decoration: none; color: var(--color-text-secondary); font-weight: 600; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: var(--color-primary); }
+        .auth-buttons { display: flex; gap: 10px; align-items: center; }
         .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
-        .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
-        .login-btn:hover { background-color: #1a73e8; color: white; }
-        .signup-btn { background-color: #1a73e8; color: white; border: 1px solid #1a73e8; }
-        .signup-btn:hover { background-color: #155ab6; }
+        .login-btn { color: var(--color-primary); border: 1px solid var(--color-primary); }
+        .login-btn:hover { background-color: var(--color-primary); color: var(--color-primary-text); }
+        .signup-btn { background-color: var(--color-primary); color: var(--color-primary-text); border: 1px solid var(--color-primary); }
+        .signup-btn:hover { background-color: var(--color-primary-hover); }
+        
         .support-section {
             padding: 60px 20px;
-            background-color: #fff;
+            background-color: var(--color-surface);
             border-radius: 8px;
             max-width: 800px;
             margin: 50px auto;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 20px var(--color-shadow);
+            position: relative; /* Added for message box positioning */
+            overflow: hidden; /* Added for message box */
         }
         .support-section h2 {
-            text-align: center; color: #005a9e; font-size: 2em; margin-bottom: 30px;
+            text-align: center; color: var(--color-heading); font-size: 2em; margin-bottom: 30px;
         }
         form {
             display: flex; flex-direction: column; gap: 15px;
         }
         input, textarea {
-            padding: 12px; border: 1px solid #ccc; border-radius: 6px;
+            padding: 12px; border: 1px solid var(--color-border); border-radius: 6px;
             font-size: 1em; width: 100%;
+            background-color: var(--color-bg);
+            color: var(--color-text);
         }
         textarea { resize: vertical; min-height: 120px; }
         button {
-            background-color: #005a9e; color: white; font-size: 1em;
+            background-color: var(--color-heading); color: var(--color-primary-text); font-size: 1em;
             font-weight: 600; border: none; padding: 12px;
             border-radius: 6px; cursor: pointer; transition: background-color 0.3s;
         }
-        button:hover { background-color: #00457a; }
-        /* FIXED: Removed the duplicate .logout button styles */
+        button:hover { background-color: var(--color-primary-hover); }
+        
+        /* --- NEW: Custom Message Box --- */
+        #message-box {
+            position: absolute;
+            top: -100px; /* Start hidden above */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--color-flash-success-bg);
+            color: var(--color-flash-success-text);
+            padding: 15px 25px;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px var(--color-shadow);
+            font-weight: 600;
+            transition: top 0.5s ease-in-out;
+            z-index: 1001;
+        }
+        #message-box.show {
+            top: 20px; /* Slide in to view */
+        }
+        /* --- END: Custom Message Box --- */
+
+        /* --- NEW: Mobile Menu Styles --- */
+        .menu-toggle {
+            display: none; /* Hidden by default */
+            cursor: pointer;
+            padding: 10px;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--color-text);
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+        .mobile-menu {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 69px; /* Height of header */
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 69px);
+            background-color: var(--color-surface);
+            z-index: 999;
+            padding: 30px;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto; /* Allow scrolling if many links */
+        }
+        .mobile-menu a {
+            color: var(--color-text);
+            font-size: 1.5em;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        .mobile-menu a:hover, .mobile-menu a.active {
+            background-color: var(--color-bg);
+            color: var(--color-primary);
+        }
+        .mobile-menu .login-btn, .mobile-menu .signup-btn {
+            text-align: center;
+            font-size: 1.2em;
+        }
+        /* --- End of New Styles --- */
+
+        /* --- NEW: Media Query for Responsiveness --- */
+        @media (max-width: 900px) { /* Breakpoint when nav items start to wrap */
+            nav {
+                display: none; /* Hide desktop nav links */
+            }
+            .auth-buttons {
+                display: none; /* Hide desktop auth buttons */
+            }
+            .menu-toggle {
+                display: block; /* Show hamburger button */
+            }
+        }
+        /* --- End of New Styles --- */
+
         footer {
-            background-color: #333; color: #aaa; text-align: center;
+            background-color: var(--color-footer-bg); color: var(--color-footer-text); text-align: center;
             padding: 20px; margin-top: 60px;
         }
     </style>
@@ -60,7 +194,6 @@
 <body>
 <header>
     <div class="container">
-        <!-- FLASK-FIX: Updated hrefs to use url_for() -->
         <a href="{{ url_for('index') }}" class="logo">RealHome</a>
         <nav>
             <ul>
@@ -68,35 +201,62 @@
                 <li><a href="{{ url_for('buy') }}" class="nav-link">Buy</a></li>
                 <li><a href="{{ url_for('rent') }}" class="nav-link">Rent</a></li>
                 <li><a href="{{ url_for('about') }}" class="nav-link">About Us</a></li>
-                <li><a href="{{ url_for('support') }}" class="nav-link">Customer Support</a></li>
-                
+                <li><a href="{{ url_for('support') }}" class="nav-link active">Customer Support</a></li>
+                <!-- ADDED "MY PROFILE" LINK -->
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('profile') }}" class="nav-link">My Profile</a></li>
                 {% endif %}
             </ul>
         </nav>
-        <!-- FIXED: Added the auth-buttons div to the header -->
         <div class="auth-buttons" id="auth-buttons">
-            <!-- FLASK-FIX: This block now uses Jinja logic from Flask-Login -->
             {% if current_user.is_authenticated %}
-                <!-- If user is logged in -->
-                <span style="margin-right:10px; font-weight:600; color:#1a73e8;">
+                <span style="margin-right:10px; font-weight:600; color:var(--color-primary);">
                     Welcome, {{ current_user.username }}
                 </span>
                 <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
             {% else %}
-                <!-- If user is logged out -->
                 <a href="{{ url_for('login') }}" class="login-btn">Login</a>
                 <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
             {% endif %}
         </div>
+
+        <!-- --- NEW: Hamburger Menu Button --- -->
+        <div id="menu-toggle" class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <!-- --- End of Hamburger Button --- -->
+
     </div>
 </header>
+
+<!-- --- NEW: Mobile Menu Container --- -->
+<div id="mobile-menu" class="mobile-menu">
+    <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+    <a href="{{ url_for('buy') }}" class="nav-link">Buy</a>
+    <a href="{{ url_for('rent') }}" class="nav-link">Rent</a>
+    <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+    <a href="{{ url_for('support') }}" class="nav-link active">Customer Support</a>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('profile') }}" class="nav-link">My Profile</a>
+        <hr style="border: none; border-top: 1px solid var(--color-border); margin: 10px 0;">
+        <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
+    {% else %}
+        <hr style="border: none; border-top: 1px solid var(--color-border); margin: 10px 0;">
+        <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+        <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+    {% endif %}
+</div>
+<!-- --- End of Mobile Menu --- -->
+
 <main>
     <section class="support-section">
+        <!-- NEW: Message box added here -->
+        <div id="message-box"></div>
+
         <h2>Customer Support</h2>
         <form id="support-form">
-            <!-- FLASK-FIX: Pre-fill user data from the server -->
             <input type="text" id="name" placeholder="Your Name" value="{{ current_user.username }}" required>
             <input type="email" id="email" placeholder="Your Email" value="{{ current_user.email }}" required>
             <textarea id="message" placeholder="Describe your issue..." required></textarea>
@@ -107,20 +267,43 @@
 <footer>
     <p>&copy; 2025 RealHome. All rights reserved.</p>
 </footer>
-<script>
-// FLASK-FIX: The old login-check script is REMOVED.
-// The page is now protected by the server-side @login_required.
 
-// This script just handles the form submission alert.
+<!-- SCRIPT UPDATED to remove alert() -->
+<script>
+
+// Custom function to show the message box
+function showMessage(message) {
+    const messageBox = document.getElementById("message-box");
+    messageBox.textContent = message;
+    messageBox.classList.add("show");
+
+    // Hide the message box after 3 seconds
+    setTimeout(() => {
+        messageBox.classList.remove("show");
+    }, 3000);
+}
+
 document.getElementById("support-form").addEventListener("submit", function(e) {
     e.preventDefault();
     const name = document.getElementById("name").value;
-    alert(`Thanks, ${name}! Your support request has been submitted. We'll get back to you soon.`);
+    
+    // Use the new message function instead of alert()
+    showMessage(`Thanks, ${name}! Your request has been submitted.`);
+    
     // Only reset the message field
     document.getElementById("message").value = "";
 });
 
-// FLASK-FIX: The header auth script is REMOVED.
+/* --- NEW: Mobile Menu Toggle Script --- */
+document.getElementById('menu-toggle').addEventListener('click', function() {
+    var mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu.style.display === 'flex') {
+        mobileMenu.style.display = 'none';
+    } else {
+        mobileMenu.style.display = 'flex';
+    }
+});
+/* --- End of New Script --- */
 </script>
 </body>
 </html>

@@ -1,69 +1,170 @@
-<html>
 <head>
-    <title>RealHome</title>
+    <title>RealHome - Boston Housing Data</title>
     <style>
-        /* All your existing styles */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        /* ... all theme styles ... */
+        :root {
+            --color-bg: #f8f9fb;
+            --color-surface: #ffffff;
+            --color-text: #333;
+            --color-text-secondary: #555;
+            --color-heading: #005a9e;
+            --color-primary: #1a73e8;
+            --color-primary-hover: #155ab6;
+            --color-primary-text: #ffffff;
+            --color-border: #ddd;
+            --color-shadow: rgba(0, 0, 0, 0.08);
+            --color-footer-bg: #333;
+            --color-footer-text: #aaa;
+            --color-cta: #fbbc05;
+            --color-cta-text: #333;
+            --color-cta-hover: #e7a600;
+            --color-feature-bg: #e8f0fe;
+            --color-feature-text: #005a9e;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: #1a202c;
+                --color-surface: #2d3748;
+                --color-text: #e2e8f0;
+                --color-text-secondary: #a0aec0;
+                --color-heading: #63b3ed;
+                --color-primary: #63b3ed;
+                --color-primary-hover: #90cdf4;
+                --color-primary-text: #1a202c;
+                --color-border: #4a5568;
+                --color-shadow: rgba(0, 0, 0, 0.25);
+                --color-footer-bg: #2d3748;
+                --color-footer-text: #a0aec0;
+                --color-feature-bg: #2c3e50;
+                --color-feature-text: #a6d4fa;
+            }
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--color-bg); color: var(--color-text); }
         * { box-sizing: border-box; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        header { background-color: #ffffff; padding: 15px 0; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        header { background-color: var(--color-surface); padding: 15px 0; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px var(--color-shadow); }
         header .container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.6em; font-weight: 700; color: #1a73e8; text-decoration: none; }
+        .logo { font-size: 1.6em; font-weight: 700; color: var(--color-primary); text-decoration: none; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
         nav li { margin-left: 25px; }
-        nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
-        nav a:hover, nav a.active { color: #1a73e8; }        
+        nav a { text-decoration: none; color: var(--color-text-secondary); font-weight: 600; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: var(--color-primary); }        
         .auth-buttons { display: flex; gap: 10px; align-items: center; }
         .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
-        .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
-        .login-btn:hover { background-color: #1a73e8; color: white; }
-        .signup-btn { background-color: #1a73e8; color: white; border: 1px solid #1a73e8; }
-        .signup-btn:hover { background-color: #155ab6; }
+        .login-btn { color: var(--color-primary); border: 1px solid var(--color-primary); }
+        .login-btn:hover { background-color: var(--color-primary); color: var(--color-primary-text); }
+        .signup-btn { background-color: var(--color-primary); color: var(--color-primary-text); border: 1px solid var(--color-primary); }
+        .signup-btn:hover { background-color: var(--color-primary-hover); }
         .hero { background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('https://www.thespruce.com/thmb/R7xvkdYkrOuC2XcpqbKM4026PA4=/1580x1005/filters:no_upscale():max_bytes(150000):strip_icc()/DanGordon-b6c4da288da14e29bab5aaf42f5af4b6.jpg'); background-size: cover; background-position: center; color: white; padding: 120px 20px; text-align: center; }
         .hero h1 { font-size: 3.2em; margin-bottom: 15px; }
         .hero p { font-size: 1.2em; margin-bottom: 35px; }
-        .services { background-color: #fff; padding: 60px 20px; }
-        .services h2 { text-align: center; font-size: 2.5em; color: #003d66; margin-bottom: 50px; }
+        .services { background-color: var(--color-surface); padding: 60px 20px; }
+        .services h2 { text-align: center; font-size: 2.5em; color: var(--color-heading); margin-bottom: 50px; }
         .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .service-card { background: #f8f9fb; padding: 25px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; }
-        .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .service-card h3 { color: #005a9e; margin-bottom: 10px; }
-        .service-card p { color: #555; }
+        .service-card { background: var(--color-bg); padding: 25px; border-radius: 8px; text-align: center; box-shadow: 0 4px 10px var(--color-shadow); transition: transform 0.3s, box-shadow 0.3s; }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px var(--color-shadow); }
+        .service-card h3 { color: var(--color-heading); margin-bottom: 10px; }
+        .service-card p { color: var(--color-text-secondary); }
         .listings-section { padding: 60px 20px; }
-        .listings-section h2 { text-align: center; font-size: 2.5em; margin-bottom: 40px; color: #003d66; }
+        .listings-section h2 { text-align: center; font-size: 2.5em; margin-bottom: 40px; color: var(--color-heading); }
         .listings-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
-        .listing-card { background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
-        .listing-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+        .listing-card { background-color: var(--color-surface); border-radius: 8px; box-shadow: 0 4px 10px var(--color-shadow); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
+        .listing-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px var(--color-shadow); }
         .listing-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
         .listing-card-content { padding: 20px; }
-        .listing-card-content h3 { font-size: 1.5em; margin: 0 0 10px; color: #005a9e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .listing-card-content .price { font-size: 1.5em; font-weight: 700; color: #333; margin-bottom: 10px; }
-        .listing-card-content .details { color: #555; margin-bottom: 10px; }
-        .listing-card-content .address { color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        #property-details-view { display: none; padding: 60px 0; background-color: #fff; margin-top: 40px; border-top: 2px solid #ddd; }
-        #detail-title { font-size: 3em; color: #005a9e; margin-bottom: 10px; }
-        #detail-price { font-size: 2.5em; font-weight: 700; color: #333; margin-bottom: 20px; }
-        #detail-address { font-size: 1.2em; color: #777; margin-bottom: 20px; }
+        .listing-card-content h3 { font-size: 1.5em; margin: 0 0 10px; color: var(--color-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .listing-card-content .price { font-size: 1.5em; font-weight: 700; color: var(--color-text); margin-bottom: 10px; }
+        .listing-card-content .details { color: var(--color-text-secondary); margin-bottom: 10px; }
+        .listing-card-content .address { color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #property-details-view { display: none; padding: 60px 0; background-color: var(--color-surface); margin-top: 40px; border-top: 2px solid var(--color-border); }
+        #detail-title { font-size: 3em; color: var(--color-heading); margin-bottom: 10px; }
+        #detail-price { font-size: 2.5em; font-weight: 700; color: var(--color-text); margin-bottom: 20px; }
+        #detail-address { font-size: 1.2em; color: var(--color-text-secondary); margin-bottom: 20px; }
         #detail-image { width: 100%; height: 500px; object-fit: cover; border-radius: 8px; margin-bottom: 30px; }
         .key-features { display: flex; gap: 15px; margin-top: 20px; }
-        .feature-item { background-color: #e8f0fe; padding: 10px 15px; border-radius: 5px; font-weight: 600; color: #005a9e; }
-        .cta-button { display: inline-block; padding: 15px 30px; background-color: #fbbc05; color: #333; text-align: center; font-size: 1.2em; font-weight: 700; border-radius: 8px; margin-top: 30px; text-decoration: none; transition: background-color 0.3s; }
-        .cta-button:hover { background-color: #e7a600; }
-        footer { background-color: #333; color: #aaa; text-align: center; padding: 30px 20px; }
+        .feature-item { background-color: var(--color-feature-bg); padding: 10px 15px; border-radius: 5px; font-weight: 600; color: var(--color-feature-text); }
+        .cta-button { display: inline-block; padding: 15px 30px; background-color: var(--color-cta); color: var(--color-cta-text); text-align: center; font-size: 1.2em; font-weight: 700; border-radius: 8px; margin-top: 30px; text-decoration: none; transition: background-color 0.3s; }
+        .cta-button:hover { background-color: var(--color-cta-hover); }
+        footer { background-color: var(--color-footer-bg); color: var(--color-footer-text); text-align: center; padding: 30px 20px; }
+
+        /* --- NEW: Mobile Menu Styles --- */
+        .menu-toggle {
+            display: none; /* Hidden by default */
+            cursor: pointer;
+            padding: 10px;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--color-text);
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+        .mobile-menu {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 69px; /* Height of header */
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 69px);
+            background-color: var(--color-surface);
+            z-index: 999;
+            padding: 30px;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto; /* Allow scrolling if many links */
+        }
+        .mobile-menu a {
+            color: var(--color-text);
+            font-size: 1.5em;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        .mobile-menu a:hover, .mobile-menu a.active {
+            background-color: var(--color-bg);
+            color: var(--color-primary);
+        }
+        .mobile-menu .login-btn, .mobile-menu .signup-btn {
+            text-align: center;
+            font-size: 1.2em;
+        }
+        .login-btn { color: var(--color-primary); border: 1px solid var(--color-primary); }
+        .login-btn:hover { background-color: var(--color-primary); color: var(--color-primary-text); }
+        .signup-btn { background-color: var(--color-primary); color: var(--color-primary-text); border: 1px solid var(--color-primary); }
+        .signup-btn:hover { background-color: var(--color-primary-hover); }
+
+
+        /* --- NEW: Media Query for Responsiveness --- */
+        @media (max-width: 900px) { /* Breakpoint when nav items start to wrap */
+            nav {
+                display: none; /* Hide desktop nav links */
+            }
+            .auth-buttons {
+                display: none; /* Hide desktop auth buttons */
+            }
+            .menu-toggle {
+                display: block; /* Show hamburger button */
+            }
+        }
+        /* --- End of New Styles --- */
     </style>
 </head>
 <body>
 <header>
     <div class="container">
         <a href="{{ url_for('index') }}" class="logo">RealHome</a>
-       <nav>
+        <nav>
             <ul>
-                <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+                <li><a href="{{ url_for('index') }}" class="nav-link active">Home</a></li>
                 <li><a href="{{ url_for('buy') }}" class="nav-link">Buy</a></li>
                 <li><a href="{{ url_for('rent') }}" class="nav-link">Rent</a></li>
                 <li><a href="{{ url_for('about') }}" class="nav-link">About Us</a></li>
                 <li><a href="{{ url_for('support') }}" class="nav-link">Customer Support</a></li>
-                
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('profile') }}" class="nav-link">My Profile</a></li>
                 {% endif %}
@@ -71,7 +172,7 @@
         </nav>
         <div class="auth-buttons" id="auth-buttons">
             {% if current_user.is_authenticated %}
-                <span style="margin-right:10px; font-weight:600; color:#1a73e8;">
+                <span style="margin-right:10px; font-weight:600; color:var(--color-primary);">
                     Welcome, {{ current_user.username }}
                 </span>
                 <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
@@ -80,8 +181,37 @@
                 <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
             {% endif %}
         </div>
+        
+        <!-- --- NEW: Hamburger Menu Button --- -->
+        <div id="menu-toggle" class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <!-- --- End of Hamburger Button --- -->
+
     </div>
 </header>
+
+<!-- --- NEW: Mobile Menu Container --- -->
+<div id="mobile-menu" class="mobile-menu">
+    <a href="{{ url_for('index') }}" class="nav-link active">Home</a>
+    <a href="{{ url_for('buy') }}" class="nav-link">Buy</a>
+    <a href="{{ url_for('rent') }}" class="nav-link">Rent</a>
+    <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+    <a href="{{ url_for('support') }}" class="nav-link">Customer Support</a>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('profile') }}" class="nav-link">My Profile</a>
+        <hr style="border: none; border-top: 1px solid var(--color-border); margin: 10px 0;">
+        <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
+    {% else %}
+        <hr style="border: none; border-top: 1px solid var(--color-border); margin: 10px 0;">
+        <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+        <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+    {% endif %}
+</div>
+<!-- --- End of Mobile Menu --- -->
+
 <section class="hero">
     <h1>Find Your Dream Home in Boston</h1>
     <p>The best properties, based on the Boston Housing dataset.</p>
@@ -90,9 +220,9 @@
     <div class="container">
         <h2>Why Should you Choose RealHome?</h2>
         <div class="service-grid">
-            <div class="service-card"><h3>Verified Listings</h3><p>Every property is thoroughly verified.</p></div>
-            <div class="service-card"><h3>Expert Assistance</h3><p>Our agents help you find your perfect home.</p></div>
-            <div class="service-card"><h3>Smart Search</h3><p>Filter properties easily by budget, location, and more.</p></div>
+            <div class="service-card"><h3>Verified Data</h3><p>Using the classic Boston Housing dataset.</p></div>
+            <div class="service-card"><h3>Statistical Insights</h3><p>Analyze properties based on real data.</p></div>
+            <div class="service-card"><h3>ML Ready</h3><p>A perfect foundation for a data science project.</p></div>
         </div>
     </div>
 </section>
@@ -100,41 +230,46 @@
     <div class="container">
         <h2>Featured Properties</h2>
         <div class="listings-container">
-            <!-- THIS LOOP IS NOW FIXED FOR BOSTON DATA -->
+            
             {% for prop in properties %}
             <article 
                 class="listing-card"
                 onclick="showDetails(
-                    '{{ prop.property_type }}', 
-                    '${{ "{:,.0f}".format(prop.price) }}', 
-                    '{{ prop.bedrooms }} Rooms | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft', 
-                    '{{ prop.address }}, {{ prop.city }}, {{ prop.state }}', 
+                    '{{ prop.id }}', 
+                    'Boston Property', 
+                    '${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}', 
+                    '{{ "{:.1f}".format(prop.rm or 0) }} Rooms (RM) | {{ "{:.1f}".format(prop.ptratio or 0) }} P/T Ratio | {{ "{:.2f}".format(prop.crim or 0) }} Crime Rate', 
+                    'Property ID #{{ prop.id }}', 
                     '{{ prop.image_url }}'
                 )">
-                <img src="{{ prop.image_url }}" alt="{{ prop.property_type }}"
-                     onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Property+Image';">
+                <img src="{{ prop.image_url }}" alt="Boston Property"
+                     onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Image+Not+Found';">
+                
                 <div class="listing-card-content">
-                    <div class="price">${{ "{:,.0f}".format(prop.price) }}</div>
-                    <h3>{{ prop.address }}</h3>
-                    <div class="details">{{ prop.bedrooms }} Rooms | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft</div>
-                    <div class="address">{{ prop.city }}, {{ prop.state }}</div>
+                    <!-- === THIS LINE IS FIXED === -->
+                    <div class="price">${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}</div>
+                    <h3>Property #{{ prop.id }}</h3>
+                    <div class="details">{{ "{:.1f}".format(prop.rm or 0) }} Rooms | {{ "{:.2f}".format(prop.crim or 0) }} Crime Rate</div>
+                    <div class="address">Pupil-Teacher Ratio: {{ prop.ptratio or 'N/A' }}</div>
                 </div>
             </article>
             {% else %}
-            <p>No featured properties to display. Run the seed.py script!</p>
+            <p>No featured properties. You must run your new seed.py script!</p>
             {% endfor %}
+            
         </div>
     </div>
 </section>
 <section id="property-details-view">
     <div class="container">
         <button onclick="hideDetails()" class="cta-button" style="background-color: #ccc; float: right; margin-top: -20px; border: none; cursor: pointer;">Close [X]</button>
-        <img id="detail-image" src="" alt="Property Image">
+        <img id="detail-image" src="" alt="Property Image"
+             onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Image+Not+Found';">
         <h1 id="detail-title"></h1>
         <p id="detail-address"></p>
         <p id="detail-price"></p>
         <div class="info-section">
-            <h3 style="color: #1a73e8;">Key Details</h3>
+            <h3 style="color: var(--color-primary);">Key Details</h3>
             <div class="key-features">
                 <div class="feature-item" id="feature-beds"></div>
                 <div class="feature-item" id="feature-baths"></div>
@@ -142,10 +277,10 @@
             </div>
         </div>
         <div class="info-section">
-            <h3 style="color: #1a73e8; margin-top: 30px;">Property Description</h3>
-            <p id="detail-description">Click a property card above to see the full details here.</p>
+            <h3 style="color: var(--color-primary); margin-top: 30px;">Property Description</h3>
+            <p id="detail-description">This is a data tract from the Boston Housing dataset.</p>
         </div>
-        <a href="{{ url_for('support') }}" class="cta-button">Contact Agent</a>
+        <a id="detail-contact-btn" href="#" class="cta-button">Contact Agent</a>
     </div>
 </section>
 <footer>
@@ -153,26 +288,45 @@
         <p>&copy; 2025 RealHome. All rights reserved.</p>
     </div>
 </footer>
+
 <script>
-function showDetails(title, price, details, address, image) {
+// The script is now also safer
+function showDetails(propertyId, title, price, details, address, image) {
     const detailsView = document.getElementById('property-details-view');
     const parts = details.split('|').map(p => p.trim());
+    
     document.getElementById('detail-title').textContent = title;
     document.getElementById('detail-price').textContent = price;
     document.getElementById('detail-address').textContent = address;
-    document.getElementById('detail-image').src = image;
+    document.getElementById('detail-image').src = image; 
+    
     document.getElementById('feature-beds').textContent = parts[0] || 'N/A Rooms';
-    document.getElementById('feature-baths').textContent = parts[1] || 'N/A Baths';
-    document.getElementById('feature-area').textContent = parts[2] || 'N/A sqft';
+    document.getElementById('feature-baths').textContent = parts[1] || 'N/A P/T Ratio';
+    document.getElementById('feature-area').textContent = parts[2] || 'N/A Crime Rate';
+    
     document.getElementById('detail-description').textContent = 
-        `This premium property, "${title}", is located in ${address} and listed for ${price}. 
-        It features ${parts.join(', ')}. Contact us for more information.`;
-        document.getElementById('detail-contact-btn').href = '/contact/' + propertyId;
+        `This data tract, ${address}, is listed for ${price}. 
+        Key statistical features include: ${parts.join(', ')}. Contact us for more information.`;
+    
+    document.getElementById('detail-contact-btn').href = '/contact/' + propertyId;
+
     detailsView.style.display = 'block';
-document.getElementById('detail-title').scrollIntoView({ behavior: 'smooth', block: 'center' });}
+    document.getElementById('detail-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 function hideDetails() {
     document.getElementById('property-details-view').style.display = 'none';
 }
+
+/* --- NEW: Mobile Menu Toggle Script --- */
+document.getElementById('menu-toggle').addEventListener('click', function() {
+    var mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu.style.display === 'flex') {
+        mobileMenu.style.display = 'none';
+    } else {
+        mobileMenu.style.display = 'flex';
+    }
+});
+/* --- End of New Script --- */
 </script>
 </body>
 </html>

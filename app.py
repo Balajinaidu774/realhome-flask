@@ -32,19 +32,26 @@ class User(db.Model, UserMixin):
 
 class Property(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    price = db.Column(db.Integer, nullable=False)
-    address = db.Column(db.String(200), nullable=True)
-    city = db.Column(db.String(100), nullable=True)
-    state = db.Column(db.String(100), nullable=True)
-    zipcode = db.Column(db.String(20), nullable=True)
-    bedrooms = db.Column(db.Integer, nullable=True)
-    bathrooms = db.Column(db.Integer, nullable=True)
-    square_feet = db.Column(db.Integer, nullable=True)
-    property_type = db.Column(db.String(50), nullable=True)
+    crim = db.Column(db.Float, nullable=True)
+    zn = db.Column(db.Float, nullable=True)
+    indus = db.Column(db.Float, nullable=True)
+    chas = db.Column(db.Integer, nullable=True)
+    nox = db.Column(db.Float, nullable=True)
+    rm = db.Column(db.Float, nullable=True)      # Avg. rooms (our "BHK")
+    age = db.Column(db.Float, nullable=True)
+    dis = db.Column(db.Float, nullable=True)
+    rad = db.Column(db.Integer, nullable=True)
+    tax = db.Column(db.Float, nullable=True)
+    ptratio = db.Column(db.Float, nullable=True)
+    b = db.Column(db.Float, nullable=True)
+    lstat = db.Column(db.Float, nullable=True)
+    medv = db.Column(db.Float, nullable=True)    # Price in $1000s (our "Price")
+    
+    # === NEW COLUMN ADDED ===
     image_url = db.Column(db.String(500), nullable=True)
     
     def __repr__(self):
-        return f"Property('{self.address}', '{self.price}')"
+        return f"Property('ID: {self.id}', 'Price (MEDV): {self.medv}')"
 
 # --- User Loader ---
 
@@ -105,7 +112,7 @@ def logout():
 
 @app.route('/')
 def index():
-    properties = Property.query.limit(3).all()
+    properties = Property.query.order_by(db.func.random()).limit(3).all()
     return render_template('index.html', properties=properties)
 
 @app.route('/buy')
@@ -128,31 +135,22 @@ def support():
     return render_template('support.html')
 
 @app.route('/profile')
-@login_required  # Ensures only logged-in users can see this
+@login_required
 def profile():
     return render_template('profile.html')
 
-# --- NEW ROUTE FOR CONTACT PAGE ---
 @app.route('/contact/<int:property_id>', methods=['GET', 'POST'])
 @login_required
 def contact(property_id):
-    # Find the specific property by its ID, or show a 404 error if not found
     prop = Property.query.get_or_404(property_id)
     
     if request.method == 'POST':
-        # Get the message from the form
         message = request.form.get('message')
-        
-        # Here you would normally email the agent or save the inquiry.
-        # For this example, we'll just flash a success message.
-        print(f"Inquiry from {current_user.email} about {prop.address}: {message}")
-        
-        flash('Your message has been sent to the agent!', 'success')
+        print(f"Inquiry from {current_user.email} about Property ID {prop.id}: {message}")
+        flash('Your message has been sent!', 'success')
         return redirect(url_for('contact', property_id=prop.id))
 
-    # For a GET request, just show the page with the property info
     return render_template('contact.html', prop=prop)
-# ----------------------------------
 
 # --- Run the Application ---
 

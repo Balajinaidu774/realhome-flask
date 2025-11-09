@@ -1,52 +1,106 @@
-<html>
 <head>
     <title>Sign Up – RealHome</title>
     <style>
+        /* ... all theme styles ... */
+        :root {
+            --color-bg: #f8f9fb;
+            --color-surface: #ffffff;
+            --color-text: #333;
+            --color-text-secondary: #555;
+            --color-heading: #005a9e;
+            --color-primary: #1a73e8;
+            --color-primary-hover: #155ab6;
+            --color-primary-text: #ffffff;
+            --color-border: #ddd;
+            --color-shadow: rgba(0, 0, 0, 0.08);
+            --color-footer-bg: #333;
+            --color-footer-text: #aaa;
+            --color-cta: #fbbc05;
+            --color-cta-text: #333;
+            --color-cta-hover: #e7a600;
+            --color-feature-bg: #e8f0fe;
+            --color-feature-text: #005a9e;
+            --color-flash-success-bg: #d4edda;
+            --color-flash-success-text: #155724;
+            --color-flash-danger-bg: #f8d7da;
+            --color-flash-danger-text: #721c24;
+            --color-flash-info-bg: #d1ecf1;
+            --color-flash-info-text: #0c5460;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: #1a202c;
+                --color-surface: #2d3748;
+                --color-text: #e2e8f0;
+                --color-text-secondary: #a0aec0;
+                --color-heading: #63b3ed;
+                --color-primary: #63b3ed;
+                --color-primary-hover: #90cdf4;
+                --color-primary-text: #1a202c;
+                --color-border: #4a5568;
+                --color-shadow: rgba(0, 0, 0, 0.25);
+                --color-footer-bg: #2d3748;
+                --color-footer-text: #a0aec0;
+                --color-feature-bg: #2c3e50;
+                --color-feature-text: #a6d4fa;
+                --color-flash-success-bg: #2f4a39;
+                --color-flash-success-text: #b8f2d5;
+                --color-flash-danger-bg: #5a2c32;
+                --color-flash-danger-text: #fbcad1;
+                --color-flash-info-bg: #244651;
+                --color-flash-info-text: #a6d8e4;
+            }
+        }
+        /* --- END THEME STYLES --- */
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 0; background-color: #f7f9fc; color: #333;
+            margin: 0; padding: 0; background-color: var(--color-bg); color: var(--color-text);
         }
         * { box-sizing: border-box; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header {
-            background-color: #fff; padding: 15px 0; border-bottom: 1px solid #ddd;
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background-color: var(--color-surface); padding: 15px 0; border-bottom: 1px solid var(--color-border);
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px var(--color-shadow);
         }
         header .container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5em; font-weight: 700; color: #005a9e; text-decoration: none; }
+        .logo { font-size: 1.5em; font-weight: 700; color: var(--color-primary); text-decoration: none; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
         nav li { margin-left: 25px; }
-        nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
-        nav a:hover, nav a.active { color: #005a9e; }
+        nav a { text-decoration: none; color: var(--color-text-secondary); font-weight: 600; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: var(--color-primary); }
         .auth-section {
             display: flex; justify-content: center; align-items: center;
             min-height: calc(100vh - 160px);
             padding: 60px 0;
-            background: linear-gradient(135deg, #005a9e, #003d66);
+            background: linear-gradient(135deg, var(--color-heading), var(--color-primary-hover));
         }
         .auth-box {
-            background-color: #fff; border-radius: 10px; padding: 40px 30px;
+            background-color: var(--color-surface); border-radius: 10px; padding: 40px 30px;
             width: 100%; max-width: 400px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px var(--color-shadow);
         }
-        .auth-box h2 { text-align: center; color: #005a9e; margin-bottom: 25px; }
+        .auth-box h2 { text-align: center; color: var(--color-heading); margin-bottom: 25px; }
         form { display: flex; flex-direction: column; gap: 15px; }
         input {
-            padding: 12px; border: 1px solid #ccc; border-radius: 6px;
+            padding: 12px; border: 1px solid var(--color-border); border-radius: 6px;
             font-size: 1em; transition: border-color 0.3s;
+            background-color: var(--color-bg);
+            color: var(--color-text);
         }
-        input:focus { border-color: #005a9e; outline: none; }
+        input:focus { border-color: var(--color-primary); outline: none; }
         button {
-            background-color: #005a9e; color: white; font-size: 1em;
+            background-color: var(--color-heading); color: var(--color-primary-text); font-size: 1em;
             font-weight: 600; border: none; padding: 12px;
             border-radius: 6px; cursor: pointer; transition: background-color 0.3s;
         }
-        button:hover { background-color: #00457a; }
+        button:hover { background-color: var(--color-primary-hover); }
         .auth-footer { text-align: center; margin-top: 15px; font-size: 0.95em; }
-        .auth-footer a { color: #005a9e; text-decoration: none; font-weight: 600; }
+        .auth-footer a { color: var(--color-heading); text-decoration: none; font-weight: 600; }
         .auth-footer a:hover { text-decoration: underline; }
         footer {
-            background-color: #333; color: #aaa; text-align: center;
+            background-color: var(--color-footer-bg); color: var(--color-footer-text); text-align: center;
             padding: 20px;
         }
         /* STYLES FOR FLASH MESSAGES */
@@ -56,8 +110,62 @@
             border-radius: 6px;
             font-weight: 600;
         }
-        .flash-success { background-color: #d4edda; color: #155724; }
-        .flash-danger { background-color: #f8d7da; color: #721c24; }
+        .flash-success { background-color: var(--color-flash-success-bg); color: var(--color-flash-success-text); }
+        .flash-danger { background-color: var(--color-flash-danger-bg); color: var(--color-flash-danger-text); }
+
+        /* --- NEW: Mobile Menu Styles --- */
+        .menu-toggle {
+            display: none; /* Hidden by default */
+            cursor: pointer;
+            padding: 10px;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--color-text);
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+        .mobile-menu {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 69px; /* Height of header */
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 69px);
+            background-color: var(--color-surface);
+            z-index: 999;
+            padding: 30px;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto; /* Allow scrolling if many links */
+        }
+        .mobile-menu a {
+            color: var(--color-text);
+            font-size: 1.5em;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+        .mobile-menu a:hover, .mobile-menu a.active {
+            background-color: var(--color-bg);
+            color: var(--color-primary);
+        }
+        /* --- End of New Styles --- */
+
+        /* --- NEW: Media Query for Responsiveness --- */
+        @media (max-width: 900px) { /* Breakpoint when nav items start to wrap */
+            nav {
+                display: none; /* Hide desktop nav links */
+            }
+            .menu-toggle {
+                display: block; /* Show hamburger button */
+            }
+        }
+        /* --- End of New Styles --- */
     </style>
 </head>
 <body>
@@ -73,8 +181,30 @@
                 <li><a href="{{ url_for('signup') }}" class="active">Sign Up</a></li>
             </ul>
         </nav>
+
+        <!-- --- NEW: Hamburger Menu Button --- -->
+        <div id="menu-toggle" class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <!-- --- End of Hamburger Button --- -->
+
     </div>
 </header>
+
+<!-- --- NEW: Mobile Menu Container --- -->
+<div id="mobile-menu" class="mobile-menu">
+    <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+    <a href="{{ url_for('buy') }}" class="nav-link">Buy</a>
+    <a href="{{ url_for('rent') }}" class="nav-link">Rent</a>
+    <a href="{{ url_for('support') }}" class="nav-link">Support</a>
+    <hr style="border: none; border-top: 1px solid var(--color-border); margin: 10px 0;">
+    <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+    <a href="{{ url_for('signup') }}" class="nav-link active">Sign Up</a>
+</div>
+<!-- --- End of Mobile Menu --- -->
+
 <section class="auth-section">
     <div class="auth-box">
         <h2>Create Your Account</h2>
@@ -90,11 +220,6 @@
             {% endif %}
         {% endwith %}
 
-        <!-- 
-          THIS IS THE FIX:
-          - method="POST" sends data to the server.
-          - name="username", name="email", name="password" are keys for Flask.
-        -->
         <form method="POST" action="{{ url_for('signup') }}">
             <input type="text" id="signup-name" name="username" placeholder="Full Name" required>
             <input type="email" id="signup-email" name="email" placeholder="Email" required>
@@ -112,10 +237,18 @@
     <p>&copy; 2025 RealHome. All rights reserved.</p>
 </footer>
 
-<!-- 
-  THE OLD <script> TAG IS REMOVED.
-  This allows the form to submit to the server correctly.
--->
+<!-- --- NEW: Mobile Menu Toggle Script --- -->
+<script>
+document.getElementById('menu-toggle').addEventListener('click', function() {
+    var mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu.style.display === 'flex') {
+        mobileMenu.style.display = 'none';
+    } else {
+        mobileMenu.style.display = 'flex';
+    }
+});
+</script>
+<!-- --- End of New Script --- -->
 
 </body>
 </html>
