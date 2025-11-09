@@ -153,8 +153,7 @@ function showDetails(title, price, details, address, image) {
         Key features include: ${parts.join(', ')}. Contact us for more information.`;
         document.getElementById('detail-contact-btn').href = '/contact/' + propertyId;
     detailsView.style.display = 'block';
-    detailsView.scrollIntoView({ behavior: 'smooth' });
-}
+document.getElementById('detail-title').scrollIntoView({ behavior: 'smooth', block: 'center' });}
 function hideDetails() {
     document.getElementById('property-details-view').style.display = 'none';
 }
