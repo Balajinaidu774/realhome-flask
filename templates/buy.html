@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buy Properties in Bangalore - RealHome</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0; background-color: #f8f9fb; color: #333;
+        }
+        * { box-sizing: border-box; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        /* Header */
+        header {
+            background-color: #ffffff; padding: 15px 0; border-bottom: 1px solid #ddd;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.6em; font-weight: 700; color: #1a73e8; text-decoration: none; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
+        nav li { margin-left: 25px; }
+        nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: #1a73e8; }
+        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
+        .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
+        .login-btn:hover { background-color: #1a73e8; color: white; }
+        .signup-btn { background-color: #1a73e8; color: white; border: 1px solid #1a73e8; }
+        .signup-btn:hover { background-color: #155ab6; }
+        /* Hero */
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('https://d27p8o2qkwv41j.cloudfront.net/wp-content/uploads/2016/06/dreamstime_m_4794570-e1467280605773.jpg');
+            background-size: cover; background-position: center;
+            color: white; padding: 100px 20px; text-align: center;
+        }
+        .hero h1 { font-size: 3em; margin-bottom: 20px; }
+        .hero p { font-size: 1.2em; margin-bottom: 30px; }
+        #search-form {
+            background-color: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 10px;
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
+            max-width: 900px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        #search-form input, #search-form select {
+            padding: 12px; font-size: 1em; border: 1px solid #ccc; border-radius: 6px;
+            flex: 1; min-width: 150px;
+        }
+        #search-form button {
+            padding: 12px 25px; font-size: 1em; font-weight: 700; color: white;
+            background-color: #005a9e; border: none; border-radius: 6px;
+            cursor: pointer; transition: background-color 0.3s;
+        }
+        #search-form button:hover { background-color: #00457a; }       
+        /* Listings */
+        .listings-section { padding: 60px 0; }
+        .listings-section h2 { text-align: center; font-size: 2.5em; margin-bottom: 40px; color: #003d66; }
+        .listings-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;
+        }
+        .listing-card {
+            background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;
+        }
+        .listing-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+        .listing-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
+        .listing-card-content { padding: 20px; }
+        .listing-card-content h3 { font-size: 1.8em; margin-top: 0; margin-bottom: 10px; color: #005a9e; }
+        .listing-card-content .price { font-size: 1.5em; font-weight: 700; color: #333; margin-bottom: 15px; }
+        .listing-card-content .details { font-size: 1em; color: #555; margin-bottom: 15px; }
+        .listing-card-content .address { font-size: 0.95em; color: #777; }
+        footer {
+            background-color: #333; color: #aaa; text-align: center;
+            padding: 30px 20px; margin-top: 40px;
+        }
+        /* New Styles for Property Detail View (Copied from Index.html's look) */
+        #property-details-view {
+            display: none; /* Initially hidden */
+            padding: 60px 0;
+            background-color: #fff;
+            margin-top: 40px;
+            border-top: 2px solid #ddd;
+        }
+        #detail-title { font-size: 3em; color: #005a9e; margin-bottom: 10px; }
+        #detail-price { font-size: 2.5em; font-weight: 700; color: #333; margin-bottom: 20px; }
+        #detail-address { font-size: 1.2em; color: #777; margin-bottom: 20px; }
+        #detail-image { width: 100%; height: 500px; object-fit: cover; border-radius: 8px; margin-bottom: 30px; }
+        .key-features { display: flex; gap: 15px; margin-top: 20px; }
+        .feature-item { background-color: #e8f0fe; padding: 10px 15px; border-radius: 5px; font-weight: 600; color: #005a9e; }
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #fbbc05;
+            color: #333;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 700;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .cta-button:hover { background-color: #e7a600; }
+        /* Style for the description and contact prompt */
+        #detail-description { line-height: 1.6; color: #555; }
+        
+    </style>
+</head>
+<body>
+    <header>
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="logo">RealHome</a>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+                <li><a href="{{ url_for('buy') }}" class="nav-link active">Buy</a></li>
+                <li><a href="{{ url_for('rent') }}" class="nav-link">Rent</a></li>
+                <li><a href="{{ url_for('about') }}" class="nav-link">About Us</a></li>
+                <li><a href="{{ url_for('support') }}" class="nav-link">Customer Support</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons" id="auth-buttons">
+            <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+            <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+        </div>
+    </div>
+    
+</header>
+<section class="hero">
+    <h1>Find Your Dream Home with RealHome</h1>
+    <p>Explore the best properties for sale across Bangalore.</p>
+    <form id="search-form">
+        <input type="text" id="location" placeholder="Enter area like Koramangala...">
+        <select id="property-type">
+             <option value="all">HOUSE TYPES</option>
+             <option value="apartment">APARTMENT</option>
+             <option value="house">FULL HOUSE</option>
+             <option value="plot">PG/HOSTEL</option>
+        </select>
+       
+        <select id="bedrooms">
+            <option value="all">BHK TYPE</option>
+            <option value="1">1 BHK</option>
+            <option value="2">2 BHK</option>
+            <option value="3">3 BHK</option>
+            <option value="4plus">4+ BHK</option>
+        </select>
+        <select id="price-range">
+            <option value="all">PRICE RANGE</option>
+            <option value="50l-1cr">₹50L - ₹1Cr</option>
+            <option value="1cr-3cr">₹1Cr - ₹3Cr</option>
+            <option value="3cr+">₹3 Cr +</option>
+        </select>
+        <select id="possession-status">
+            <option value="all">POSSESSION STATUS</option>
+            <option value="ready">Ready to Move</option>
+            <option value="under">Under Construction</option>
+        </select>
+        <button type="submit">Search</button>
+      
+    </form>
+</section>
+    <main class="listings-section">
+        <div class="container">
+            <h2>Featured Properties for Sale</h2>
+            <div class="listings-container">
+                <article class="listing-card" 
+                         onclick="showDetails(
+                            'Modern Villa in Whitefield', 
+                            '₹3.9 Cr', 
+                            '3 Beds | 3 Baths | 3,100 sqft', 
+                            'Whitefield, Bengaluru', 
+                            'https://sterlingdevelopers.com/assets/img/gal-1.webp'
+                         )">
+                    <img src="https://sterlingdevelopers.com/assets/img/gal-1.webp" alt="Modern Villa"> <div class="listing-card-content">
+                        <div class="price">₹3.9 Cr</div>
+                        <h3>Modern Villa in Whitefield</h3>
+                        <div class="details">3 Beds | 3 Baths | 3,100 sqft</div>
+                        <div class="address">Whitefield, Bengaluru</div>
+                    </div>
+                </article>
+                <article class="listing-card"
+                         onclick="showDetails(
+                            '3BHK Smart Apartment', 
+                            '₹1.1 Cr', 
+                            '3 Beds | 3 Baths | 1,600 sqft', 
+                            'Whitefield, Bengaluru', 
+                            'https://sowparnika.com/euphoria-in-the-east/images/eite-Front-1.jpg'
+                         )">
+                    <img src="https://sowparnika.com/euphoria-in-the-east/images/eite-Front-1.jpg" alt="Electronic City Apartment">
+                    <div class="listing-card-content">
+                        <div class="price">₹1.1 Cr</div>
+                        <h3>3BHK Smart Apartment</h3>
+                        <div class="details">3 Beds | 3 Baths | 1,600 sqft</div>
+                        <div class="address">Whitefield, Bengaluru</div>
+                    </div>
+                </article>
+                <article class="listing-card"
+                         onclick="showDetails(
+                            'Residential Plot in Whitefield', 
+                            '₹85 Lakh', 
+                            '2,400 sqft | Gated Community | North Facing', 
+                            'Whitefield, Bengaluru', 
+                            'https://www.click.in/classifieds/images/99/13_6_2014_09_18_57_vpttfr5nrfe118eq1dcqkrtj91_t0hisjhjz.jpeg'
+                         )">
+                    <img src="https://www.click.in/classifieds/images/99/13_6_2014_09_18_57_vpttfr5nrfe118eq1dcqkrtj91_t0hisjhjz.jpeg" alt="Sarjapur Plot">
+                    <div class="listing-card-content">
+                        <div class="price">₹85 Lakh</div>
+                        <h3>Residential Plot in Whitefield</h3>
+                        <div class="details">2,400 sqft | Gated Community | North Facing</div>
+                        <div class="address">Whitefield, Bengaluru</div>
+                    </div>
+                </article>
+            </div>
+            </div>
+    </main>
+    <section class="listings-section" style="background-color: #ffffff;">
+        <div class="container">
+            <h2>Recently Added Properties</h2>
+            <div class="listings-container">
+                <article class="listing-card"
+                         onclick="showDetails(
+                            '3BHK Apartment in Kadugodi', 
+                            '₹2.3 Cr', 
+                            '3 Beds | 3 Baths | 1,800 sqft | Semi-Furnished', 
+                            '12th Main,Kadugodi, Bengaluru', 
+                            'https://newprojects.99acres.com/projects/mantri_group/mantri_global_heights/images/zohwy0au_med.jpg'
+                         )">
+                    <img src="https://newprojects.99acres.com/projects/mantri_group/mantri_global_heights/images/zohwy0au_med.jpg" alt="Indiranagar Apartment">
+                    <div class="listing-card-content">
+                        <div class="price">₹2.3 Cr</div>
+                        <h3>3BHK Apartment in Kadugodi</h3>
+                        <div class="details">3 Beds | 3 Baths | 1,800 sqft | Semi-Furnished</div>
+                        <div class="address">12th Main,Kadugodi, Bengaluru</div>
+                    </div>
+                </article>
+                <article class="listing-card"
+                         onclick="showDetails(
+                            'Luxury Villa with Private Garden', 
+                            '₹4.2 Cr', 
+                            '4 Beds | 5 Baths | 3,400 sqft', 
+                            'Bannerghatta Road, Bengaluru', 
+                            'https://teja12.kuikr.com/is/a/c/655x525/gallery_images/original/59ad147854491.gif'
+                         )">
+                    <img src="https://teja12.kuikr.com/is/a/c/655x525/gallery_images/original/59ad147854491.gif" alt="Bannerghatta Villa">
+                    <div class="listing-card-content">
+                        <div class="price">₹4.2 Cr</div>
+                        <h3>Luxury Villa with Private Garden</h3>
+                        <div class="details">4 Beds | 5 Baths | 3,400 sqft</div>
+                        <div class="address">Bannerghatta Road, Bengaluru</div>
+                    </div>
+                    
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="property-details-view">
+        <div class="container">
+            <button onclick="hideDetails()" class="cta-button" style="background-color: #ccc; float: right; margin-top: -20px; border: none; cursor: pointer;">Close [X]</button>
+            <img id="detail-image" src="" alt="Property Image">
+            <h1 id="detail-title"></h1>
+            <p id="detail-address"></p>
+            <p id="detail-price"></p>
+
+            <div class="info-section">
+                <h3 style="color: #1a73e8;">Key Details</h3>
+                <div class="key-features">
+                    <div class="feature-item" id="feature-beds"></div>
+                    <div class="feature-item" id="feature-baths"></div>
+                    <div class="feature-item" id="feature-area"></div>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3 style="color: #1a73e8; margin-top: 30px;">Property Description</h3>
+                <p id="detail-description">Click a property card above to see the full details here.</p>
+            </div>
+
+            <a href="{{ url_for('support') }}" class="cta-button">Contact Agent / Customer Support</a>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 RealHome. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        // Function to show the details section and populate it with data (Copied from index.html)
+        function showDetails(title, price, details, address, image) {
+            const detailsView = document.getElementById('property-details-view');
+            const parts = details.split('|').map(p => p.trim());
+
+            // 1. Populate Content
+            document.getElementById('detail-title').textContent = title;
+            document.getElementById('detail-price').textContent = price;
+            document.getElementById('detail-address').textContent = address;
+            document.getElementById('detail-image').src = image;
+
+            // 2. Populate Features (The first three parts of the details string)
+            document.getElementById('feature-beds').textContent = parts[0] || 'N/A Beds';
+            document.getElementById('feature-baths').textContent = parts.length > 1 ? parts[1] : 'N/A Baths';
+            document.getElementById('feature-area').textContent = parts.length > 2 ? parts[2] : 'N/A sqft';
+            
+            // 3. Create a dynamic description (Ensures all details are used)
+            const detailText = parts.join(', ');
+            document.getElementById('detail-description').textContent = 
+                `This premium property, "${title}", is located in ${address} and listed for ${price}. 
+                It features ${detailText}. This home is ready to move in and offers excellent connectivity and modern amenities. Contact us using the link below for more information or to schedule a viewing.`;
+
+
+            // 4. Show the section and scroll to it
+            detailsView.style.display = 'block';
+            detailsView.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Function to hide the details section (Copied from index.html)
+        function hideDetails() {
+            document.getElementById('property-details-view').style.display = 'none';
+        }
+        
+        // Search form handler (Updated to include possession status)
+        document.getElementById('search-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const loc = document.getElementById('location').value || 'Any';
+            const type = document.getElementById('property-type').value;
+            const bedrooms = document.getElementById('bedrooms').value; 
+            const price = document.getElementById('price-range').value;
+            const possession = document.getElementById('possession-status').value; // NEW
+
+            alert(`Searching Buy Listings:\nLocation: ${loc}\nType: ${type}\nBHK: ${bedrooms}\nPrice: ${price}\nPossession: ${possession}`); // ALERT UPDATED
+        });
+        
+        // Auth header script (Handles Welcome/Logout)
+        document.addEventListener('DOMContentLoaded', () => {
+            const authButtons = document.getElementById('auth-buttons');
+            const username = localStorage.getItem('username');
+            if (username) {
+                authButtons.innerHTML = `
+                    <span style="margin-right:10px; font-weight:600; color:#1a73e8;">Welcome, ${username}</span>
+                    <a href="#" class="login-btn" id="logout-btn">Logout</a>`;
+                document.getElementById('logout-btn').addEventListener('click', () => {
+                    localStorage.removeItem('username');
+                    location.reload();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

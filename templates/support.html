@@ -1,0 +1,149 @@
+<html>
+<head>
+       <title>Customer Support – RealHome</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0; background-color: #f7f9fc; color: #333;
+        }
+        * { box-sizing: border-box; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        /* FIXED: Header styles now include auth-buttons */
+        header {
+            background-color: #fff; padding: 15px 0; border-bottom: 1px solid #ddd;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.6em; font-weight: 700; color: #1a73e8; text-decoration: none; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
+        nav li { margin-left: 25px; }
+        nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: #1a73e8; }
+        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
+        .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
+        .login-btn:hover { background-color: #1a73e8; color: white; }
+        .signup-btn { background-color: #1a73e8; color: white; border: 1px solid #1a73e8; }
+        .signup-btn:hover { background-color: #155ab6; }
+        .support-section {
+            padding: 60px 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: 50px auto;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+        .support-section h2 {
+            text-align: center; color: #005a9e; font-size: 2em; margin-bottom: 30px;
+        }
+        form {
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        input, textarea {
+            padding: 12px; border: 1px solid #ccc; border-radius: 6px;
+            font-size: 1em; width: 100%;
+        }
+        textarea { resize: vertical; min-height: 120px; }
+        button {
+            background-color: #005a9e; color: white; font-size: 1em;
+            font-weight: 600; border: none; padding: 12px;
+            border-radius: 6px; cursor: pointer; transition: background-color 0.3s;
+        }
+        button:hover { background-color: #00457a; }
+        /* FIXED: Removed the duplicate .logout button styles */
+        footer {
+            background-color: #333; color: #aaa; text-align: center;
+            padding: 20px; margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <!-- FLASK-FIX: Updated hrefs to use url_for() -->
+        <a href="{{ url_for('index') }}" class="logo">RealHome</a>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                <li><a href="{{ url_for('rent') }}">Rent</a></li>
+                <li><a href="{{ url_for('support') }}" class="active">Support</a></li>
+            </ul>
+        </nav>
+        <!-- FIXED: Added the auth-buttons div to the header -->
+        <div class="auth-buttons" id="auth-buttons">
+            <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+            <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+        </div>
+    </div>
+</header>
+<main>
+    <section class="support-section">
+        <h2>Customer Support</h2>
+        <!-- FIX: Added data-login-url attribute to pass URL to script -->
+        <form id="support-form" data-login-url="{{ url_for('login') }}">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="message" placeholder="Describe your issue..." required></textarea>
+            <button type="submit">Submit Request</button>
+        </form>
+        <!-- FIXED: Removed the duplicate red logout button -->
+    </section>
+</main>
+<footer>
+    <p>&copy; 2025 RealHome. All rights reserved.</p>
+</footer>
+<script>
+// FIXED: This script now correctly checks for 'username'
+// and pre-fills the form.
+
+// FIX: Get the URL from the form's data-attribute
+const supportForm = document.getElementById("support-form");
+// FIX: Check if supportForm exists before accessing dataset
+if (supportForm) {
+    const loginUrl = supportForm.dataset.loginUrl;
+
+    // 1. Check for the correct key: "username"
+    const loggedInUsername = localStorage.getItem("username");
+    // 2. Redirect if "username" is not found
+    if (!loggedInUsername) {
+        alert("Please log in to access customer support.");
+        // FLASK-FIX: Redirect using URL from data-attribute
+        window.location.href = loginUrl;
+    } else {
+        // 3. Pre-fill the name field
+        document.getElementById("name").value = loggedInUsername;
+        // We don't know the user's email from localStorage, so we leave it blank
+    }
+    // 4. Handle the form submission
+    supportForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        alert(`Thanks, ${name}! Your support request has been submitted. We'll get back to you soon.`);
+        // Only reset the message field
+        document.getElementById("message").value = "";
+        document.getElementById("email").value = "";
+    });
+}
+// 5. The logic for the red logout button has been removed.
+</script>
+<script>
+// This is the standard header auth script from the other pages.
+// It will now work because the #auth-buttons div exists.
+document.addEventListener('DOMContentLoaded', () => {
+    const authButtons = document.getElementById('auth-buttons');
+    const username = localStorage.getItem('username');
+    if (username) {
+        authButtons.innerHTML = `
+            <span style="margin-right:10px; font-weight:600; color:#1a73e8;">Welcome, ${username}</span>
+            <a href="#" class="login-btn" id="logout-btn">Logout</a>
+        `;
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('username');
+            location.reload();
+        });
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – RealHome</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0; background-color: #f7f9fc; color: #333;
+        }
+        * { box-sizing: border-box; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header {
+            background-color: #fff; padding: 15px 0; border-bottom: 1px solid #ddd;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5em; font-weight: 700; color: #17181a; text-decoration: none; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
+        nav li { margin-left: 25px; }
+        nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: #111416; }
+        .auth-section {
+            display: flex; justify-content: center; align-items: center;
+            /* Adjusted height to be less extreme */
+            min-height: calc(100vh - 160px); 
+            padding: 60px 0;
+            background: linear-gradient(135deg, #0e0303, #959da1);
+        }
+        .auth-box {
+            background-color: #fff; border-radius: 10px; padding: 40px 30px;
+            width: 100%; max-width: 400px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .auth-box h2 { text-align: center; color: #005a9e; margin-bottom: 25px; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        input {
+            padding: 12px; border: 1px solid #ccc; border-radius: 6px;
+            font-size: 1em; transition: border-color 0.3s;
+        }
+        input:focus { border-color: #005a9e; outline: none; }
+        button {
+            background-color: #005a9e; color: white; font-size: 1em;
+            font-weight: 600; border: none; padding: 12px;
+            border-radius: 6px; cursor: pointer; transition: background-color 0.3s;
+        }
+        button:hover { background-color: #00457a; }
+        .auth-footer { text-align: center; margin-top: 15px; font-size: 0.95em; }
+        .auth-footer a { color: #005a9e; text-decoration: none; font-weight: 600; }
+        .auth-footer a:hover { text-decoration: underline; }
+        footer {
+            background-color: #333; color: #aaa; text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <!-- FLASK-FIX: Updated hrefs to use url_for() -->
+        <a href="{{ url_for('index') }}" class="logo">RealHome</a>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                <li><a href="{{ url_for('rent') }}">Rent</a></li>
+                <li><a href="{{ url_for('support') }}">Support</a></li>
+                <li><a href="{{ url_for('login') }}" class="active">Login</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section class="auth-section">
+    <div class="auth-box">
+        <h2>Welcome Back!</h2>
+        <form id="login-form">
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <div class="auth-footer">
+            Don't have an account? 
+            <!-- FLASK-FIX: Updated href to use url_for() -->
+            <a href="{{ url_for('signup') }}">Sign Up</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 RealHome. All rights reserved.</p>
+</footer>
+</body>
+</html>
