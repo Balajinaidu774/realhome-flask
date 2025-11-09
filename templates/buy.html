@@ -1,21 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Buy Properties in Bangalore - RealHome</title>
+    <title>Buy Properties - RealHome</title>
     <style>
-        /* All your CSS styles remain unchanged */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 0; background-color: #f8f9fb; color: #333;
-        }
+        /* All your existing styles */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f8f9fb; color: #333; }
         * { box-sizing: border-box; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        /* Header */
-        header {
-            background-color: #ffffff; padding: 15px 0; border-bottom: 1px solid #ddd;
-            position: sticky; top: 0; z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        header { background-color: #ffffff; padding: 15px 0; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         header .container { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.6em; font-weight: 700; color: #1a73e8; text-decoration: none; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
@@ -28,82 +20,29 @@
         .login-btn:hover { background-color: #1a73e8; color: white; }
         .signup-btn { background-color: #1a73e8; color: white; border: 1px solid #1a73e8; }
         .signup-btn:hover { background-color: #155ab6; }
-        /* Hero */
-        .hero {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('https://d27p8o2qkwv41j.cloudfront.net/wp-content/uploads/2016/06/dreamstime_m_4794570-e1467280605773.jpg');
-            background-size: cover; background-position: center;
-            color: white; padding: 100px 20px; text-align: center;
-        }
+        .hero { background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('https://d27p8o2qkwv41j.cloudfront.net/wp-content/uploads/2016/06/dreamstime_m_4794570-e1467280605773.jpg'); background-size: cover; background-position: center; color: white; padding: 100px 20px; text-align: center; }
         .hero h1 { font-size: 3em; margin-bottom: 20px; }
         .hero p { font-size: 1.2em; margin-bottom: 30px; }
-        #search-form {
-            background-color: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 10px;
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
-            max-width: 900px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        #search-form input, #search-form select {
-            padding: 12px; font-size: 1em; border: 1px solid #ccc; border-radius: 6px;
-            flex: 1; min-width: 150px;
-        }
-        #search-form button {
-            padding: 12px 25px; font-size: 1em; font-weight: 700; color: white;
-            background-color: #005a9e; border: none; border-radius: 6px;
-            cursor: pointer; transition: background-color 0.3s;
-        }
-        #search-form button:hover { background-color: #00457a; }       
-        /* Listings */
         .listings-section { padding: 60px 0; }
         .listings-section h2 { text-align: center; font-size: 2.5em; margin-bottom: 40px; color: #003d66; }
-        .listings-container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;
-        }
-        .listing-card {
-            background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;
-        }
+        .listings-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        .listing-card { background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
         .listing-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
         .listing-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
         .listing-card-content { padding: 20px; }
-        .listing-card-content h3 { 
-            font-size: 1.5em; /* Slightly smaller for long addresses */
-            margin-top: 0; margin-bottom: 10px; color: #005a9e; 
-            /* Prevent long text from breaking layout */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .listing-card-content h3 { font-size: 1.5em; margin: 0 0 10px; color: #005a9e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .listing-card-content .price { font-size: 1.5em; font-weight: 700; color: #333; margin-bottom: 15px; }
         .listing-card-content .details { font-size: 1em; color: #555; margin-bottom: 15px; }
-        .listing-card-content .address { 
-            font-size: 0.95em; color: #777; 
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        footer {
-            background-color: #333; color: #aaa; text-align: center;
-            padding: 30px 20px; margin-top: 40px;
-        }
-        /* Detail View Styles */
-        #property-details-view {
-            display: none; padding: 60px 0;
-            background-color: #fff; margin-top: 40px;
-            border-top: 2px solid #ddd;
-        }
+        .listing-card-content .address { font-size: 0.95em; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        footer { background-color: #333; color: #aaa; text-align: center; padding: 30px 20px; margin-top: 40px; }
+        #property-details-view { display: none; padding: 60px 0; background-color: #fff; margin-top: 40px; border-top: 2px solid #ddd; }
         #detail-title { font-size: 3em; color: #005a9e; margin-bottom: 10px; }
         #detail-price { font-size: 2.5em; font-weight: 700; color: #333; margin-bottom: 20px; }
         #detail-address { font-size: 1.2em; color: #777; margin-bottom: 20px; }
         #detail-image { width: 100%; height: 500px; object-fit: cover; border-radius: 8px; margin-bottom: 30px; }
         .key-features { display: flex; gap: 15px; margin-top: 20px; }
         .feature-item { background-color: #e8f0fe; padding: 10px 15px; border-radius: 5px; font-weight: 600; color: #005a9e; }
-        .cta-button {
-            display: inline-block; padding: 15px 30px;
-            background-color: #fbbc05; color: #333;
-            text-align: center; font-size: 1.2em;
-            font-weight: 700; border-radius: 8px;
-            margin-top: 30px; text-decoration: none;
-            transition: background-color 0.3s;
-        }
+        .cta-button { display: inline-block; padding: 15px 30px; background-color: #fbbc05; color: #333; text-align: center; font-size: 1.2em; font-weight: 700; border-radius: 8px; margin-top: 30px; text-decoration: none; transition: background-color 0.3s; }
         .cta-button:hover { background-color: #e7a600; }
         #detail-description { line-height: 1.6; color: #555; }
     </style>
@@ -115,10 +54,14 @@
         <nav>
             <ul>
                 <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
-                <li><a href="{{ url_for('buy') }}" class="nav-link active">Buy</a></li>
+                <li><a href="{{ url_for('buy') }}" class="nav-link">Buy</a></li>
                 <li><a href="{{ url_for('rent') }}" class="nav-link">Rent</a></li>
                 <li><a href="{{ url_for('about') }}" class="nav-link">About Us</a></li>
                 <li><a href="{{ url_for('support') }}" class="nav-link">Customer Support</a></li>
+                
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('profile') }}" class="nav-link">My Profile</a></li>
+                {% endif %}
             </ul>
         </nav>
         <div class="auth-buttons" id="auth-buttons">
@@ -136,117 +79,37 @@
 </header>
 <section class="hero">
     <h1>Find Your Dream Home with RealHome</h1>
-    <p>Explore the best properties for sale across Bangalore.</p>
-    <form id="search-form">
-        <input type="text" id="location" placeholder="Enter area like Koramangala...">
-        <select id="property-type">
-             <option value="all">HOUSE TYPES</option>
-             <option value="apartment">APARTMENT</option>
-             <option value="house">FULL HOUSE</option>
-             <option value="plot">PG/HOSTEL</option>
-        </select>
-       
-        <select id="bedrooms">
-            <option value="all">BHK TYPE</option>
-            <option value="1">1 BHK</option>
-            <option value="2">2 BHK</option>
-            <option value="3">3 BHK</option>
-            <option value="4plus">4+ BHK</option>
-        </select>
-        <select id="price-range">
-            <option value="all">PRICE RANGE</option>
-            <option value="50l-1cr">₹50L - ₹1Cr</option>
-            <option value="1cr-3cr">₹1Cr - ₹3Cr</option>
-            <option value="3cr+">₹3 Cr +</option>
-        </select>
-        <select id="possession-status">
-            <option value="all">POSSESSION STATUS</option>
-            <option value="ready">Ready to Move</option>
-            <option value="under">Under Construction</option>
-        </select>
-        <button type="submit">Search</button>
-      
-    </form>
+    <p>Explore the best properties for sale across Boston.</p>
 </section>
     <main class="listings-section">
         <div class="container">
-            <h2>Featured Properties for Sale</h2>
+            <h2>Properties for Sale</h2>
             <div class="listings-container">
-                <!--
-                FLASK-FIX: Replaced static content with a dynamic Jinja for loop.
-                This will loop over the 'properties' variable we passed from app.py
-                -->
+                <!-- THIS LOOP IS NOW FIXED FOR BOSTON DATA -->
                 {% for prop in properties %}
                 <article class="listing-card" 
                          onclick="showDetails(
-                            '{{ prop.property_type }} in {{ prop.city }}', 
+                            '{{ prop.property_type }}', 
                             '${{ "{:,.0f}".format(prop.price) }}', 
-                            '{{ prop.bedrooms }} Beds | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft', 
+                            '{{ prop.bedrooms }} Rooms | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft', 
                             '{{ prop.address }}, {{ prop.city }}, {{ prop.state }}', 
                             '{{ prop.image_url }}'
                          )">
-                    <!-- Use a placeholder if image_url is missing -->
-                    <img src="{{ prop.image_url }}" alt="{{ prop.property_type }} in {{ prop.city }}"
+                    <img src="{{ prop.image_url }}" alt="{{ prop.property_type }}"
                          onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Property+Image';">
                     <div class="listing-card-content">
                         <div class="price">${{ "{:,.0f}".format(prop.price) }}</div>
-                        <h3>{{ prop.property_type }} in {{ prop.city }}</h3>
-                        <div class="details">{{ prop.bedrooms }} Beds | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft</div>
-                        <div class="address">{{ prop.address }}, {{ prop.city }}</div>
+                        <h3>{{ prop.address }}</h3>
+                        <div class="details">{{ prop.bedrooms }} Rooms | {{ prop.bathrooms }} Baths | {{ prop.square_feet }} sqft</div>
+                        <div class="address">{{ prop.city }}, {{ prop.state }}</div>
                     </div>
                 </article>
                 {% else %}
-                <p>No properties found for sale at this time.</p>
+                <p>No properties for sale. Run the seed.py script!</p>
                 {% endfor %}
-                <!-- End of dynamic content -->
             </div>
         </div>
     </main>
-    
-    <!-- This "Recently Added" section still has static content. -->
-    <!-- You could create a second dynamic loop here if you wanted. -->
-    <section class="listings-section" style="background-color: #ffffff;">
-        <div class="container">
-            <h2>Recently Added Properties</h2>
-            <div class="listings-container">
-                <article class="listing-card"
-                         onclick="showDetails(
-                            '3BHK Apartment in Kadugodi', 
-                            '₹2.3 Cr', 
-                            '3 Beds | 3 Baths | 1,800 sqft | Semi-Furnished', 
-                            '12th Main,Kadugodi, Bengaluru', 
-                            'https://newprojects.99acres.com/projects/mantri_group/mantri_global_heights/images/zohwy0au_med.jpg'
-                         )">
-                    <img src="https://newprojects.99acres.com/projects/mantri_group/mantri_global_heights/images/zohwy0au_med.jpg" alt="Indiranagar Apartment">
-                    <div class="listing-card-content">
-                        <div class="price">₹2.3 Cr</div>
-                        <h3>3BHK Apartment in Kadugodi</h3>
-                        <div class="details">3 Beds | 3 Baths | 1,800 sqft | Semi-Furnished</div>
-                        <div class="address">12th Main,Kadugodi, Bengaluru</div>
-                    </div>
-                </article>
-                <article class="listing-card"
-                         onclick="showDetails(
-                            'Luxury Villa with Private Garden', 
-                            '₹4.2 Cr', 
-                            '4 Beds | 5 Baths | 3,400 sqft', 
-                            'Bannerghatta Road, Bengaluru', 
-                            'https://teja12.kuikr.com/is/a/c/655x525/gallery_images/original/59ad147854491.gif'
-                         )">
-                    <img src="https://teja12.kuikr.com/is/a/c/655x525/gallery_images/original/59ad147854491.gif" alt="Bannerghatta Villa">
-                    <div class="listing-card-content">
-                        <div class="price">₹4.2 Cr</div>
-                        <h3>Luxury Villa with Private Garden</h3>
-                        <div class="details">4 Beds | 5 Baths | 3,400 sqft</div>
-                        <div class="address">Bannerghatta Road, Bengaluru</div>
-                    </div>
-                    
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- This detail view will be populated by the JavaScript function -->
     <section id="property-details-view">
         <div class="container">
             <button onclick="hideDetails()" class="cta-button" style="background-color: #ccc; float: right; margin-top: -20px; border: none; cursor: pointer;">Close [X]</button>
@@ -254,7 +117,6 @@
             <h1 id="detail-title"></h1>
             <p id="detail-address"></p>
             <p id="detail-price"></p>
-
             <div class="info-section">
                 <h3 style="color: #1a73e8;">Key Details</h3>
                 <div class="key-features">
@@ -263,54 +125,40 @@
                     <div class="feature-item" id="feature-area"></div>
                 </div>
             </div>
-            
             <div class="info-section">
                 <h3 style="color: #1a73e8; margin-top: 30px;">Property Description</h3>
                 <p id="detail-description">Click a property card above to see the full details here.</p>
             </div>
-
-            <a href="{{ url_for('support') }}" class="cta-button">Contact Agent / Customer Support</a>
+            <a href="{{ url_for('support') }}" class="cta-button">Contact Agent</a>
         </div>
     </section>
-    
     <footer>
         <div class="container">
             <p>&copy; 2025 RealHome. All rights reserved.</p>
         </div>
     </footer>
     <script>
-        // This JavaScript remains to power the pop-up detail view
-        function showDetails(title, price, details, address, image) {
-            const detailsView = document.getElementById('property-details-view');
-            const parts = details.split('|').map(p => p.trim());
-
-            document.getElementById('detail-title').textContent = title;
-            document.getElementById('detail-price').textContent = price;
-            document.getElementById('detail-address').textContent = address;
-            document.getElementById('detail-image').src = image;
-
-            document.getElementById('feature-beds').textContent = parts[0] || 'N/A Beds';
-            document.getElementById('feature-baths').textContent = parts.length > 1 ? parts[1] : 'N/A Baths';
-            document.getElementById('feature-area').textContent = parts.length > 2 ? parts[2] : 'N/A sqft';
-            
-            const detailText = parts.join(', ');
-            document.getElementById('detail-description').textContent = 
-                `This premium property, "${title}", is located in ${address} and listed for ${price}. 
-                It features ${detailText}. Contact us using the link below for more information.`;
-
-            detailsView.style.display = 'block';
-            detailsView.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function hideDetails() {
-            document.getElementById('property-details-view').style.display = 'none';
-        }
-        
-        // Search form handler
-        document.getElementById('search-form').addEventListener('submit', e => {
-            e.preventDefault();
-            alert('Search functionality is not yet connected to the dynamic database.');
-        });
+    function showDetails(title, price, details, address, image) {
+        const detailsView = document.getElementById('property-details-view');
+        const parts = details.split('|').map(p => p.trim());
+        document.getElementById('detail-title').textContent = title;
+        document.getElementById('detail-price').textContent = price;
+        document.getElementById('detail-address').textContent = address;
+        document.getElementById('detail-image').src = image;
+        document.getElementById('feature-beds').textContent = parts[0] || 'N/A Rooms';
+        document.getElementById('feature-baths').textContent = parts[1] || 'N/A Baths';
+        document.getElementById('feature-area').textContent = parts[2] || 'N/A sqft';
+        const detailText = parts.join(', ');
+        document.getElementById('detail-description').textContent = 
+            `This premium property, "${title}", is located in ${address} and listed for ${price}. 
+            It features ${detailText}. Contact us for more information.`;
+            document.getElementById('detail-contact-btn').href = '/contact/' + propertyId;
+        detailsView.style.display = 'block';
+        detailsView.scrollIntoView({ behavior: 'smooth' });
+    }
+    function hideDetails() {
+        document.getElementById('property-details-view').style.display = 'none';
+    }
     </script>
 </body>
 </html>

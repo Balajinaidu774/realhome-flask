@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - RealHome</title>
+    <style>
+        /* All your standard styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0; background-color: #f7f9fc; color: #333;
+        }
+        * { box-sizing: border-box; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        header {
+            background-color: #ffffff; padding: 15px 0; border-bottom: 1px solid #ddd;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.6em; font-weight: 700; color: #1a73e8; text-decoration: none; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
+        nav li { margin-left: 25px; }
+        nav a { text-decoration: none; color: #555; font-weight: 600; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: #1a73e8; }
+        .auth-buttons { display: flex; gap: 10px; align-items: center; }
+        .auth-buttons a { text-decoration: none; padding: 8px 16px; border-radius: 5px; font-weight: 600; transition: all 0.3s; }
+        .login-btn { color: #1a73e8; border: 1px solid #1a73e8; }
+        .login-btn:hover { background-color: #1a73e8; color: white; }
+        .signup-btn { background-color: #1a73e8; color: white; border: 1px solid #1a73e8; }
+        .signup-btn:hover { background-color: #155ab6; }
+        footer { background-color: #1a1a1a; color: #aaa; text-align: center; padding: 30px 20px; margin-top: 60px; }
+
+        /* --- NEW STYLES FOR THIS PAGE --- */
+        .profile-section {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        .profile-section h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2em;
+        }
+        .profile-info {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 25px;
+        }
+        .profile-info:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 10px;
+        }
+        .profile-info label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .profile-info p {
+            font-size: 1.25em;
+            color: #111;
+            margin: 0;
+        }
+        .profile-actions {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .cta-button {
+            display: inline-block; padding: 12px 25px; background-color: #fbbc05;
+            color: #333; text-align: center; font-size: 1em;
+            font-weight: 700; border-radius: 8px; text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .cta-button:hover { background-color: #e7a600; }
+        /* --- END OF NEW STYLES --- */
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="logo">RealHome</a>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('buy') }}">Buy</a></li>
+                <li><a href="{{ url_for('rent') }}">Rent</a></li>
+                <li><a href="{{ url_for('about') }}">About Us</a></li>
+                <li><a href="{{ url_for('support') }}">Customer Support</a></li>
+                
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('profile') }}" class="active">My Profile</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <div class="auth-buttons" id="auth-buttons">
+            {% if current_user.is_authenticated %}
+                <span style="margin-right:10px; font-weight:600; color:#1a73e8;">
+                    Welcome, {{ current_user.username }}
+                </span>
+                <a href="{{ url_for('logout') }}" class="login-btn">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+                <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <section class="profile-section">
+        <h1>My Profile</h1>
+        
+        <div class="profile-info">
+            <label>Full Name</label>
+            <p>{{ current_user.username }}</p>
+        </div>
+        
+        <div class="profile-info">
+            <label>Email Address</label>
+            <p>{{ current_user.email }}</p>
+        </div>
+
+        <div class="profile-actions">
+            <p style="color: #777; font-size: 0.9em;">Need to change your details?</p>
+            <a href="{{ url_for('support') }}" class="cta-button">Contact Support</a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 RealHome. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

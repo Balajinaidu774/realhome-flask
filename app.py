@@ -58,19 +58,16 @@ def load_user(user_id):
 def signup():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-        
     if request.method == 'POST':
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-        
         existing_user = User.query.filter_by(username=username).first()
         existing_email = User.query.filter_by(email=email).first()
-        
         if existing_user:
-            flash('Username already exists. Please choose a different one.', 'danger')
+            flash('Username already exists.', 'danger')
         elif existing_email:
-            flash('Email already registered. Please log in.', 'danger')
+            flash('Email already registered.', 'danger')
         elif not (username and email and password):
              flash('Please fill out all fields.', 'danger')
         else:
@@ -80,55 +77,45 @@ def signup():
             db.session.commit()
             flash('Your account has been created! You can now log in.', 'success')
             return redirect(url_for('login'))
-            
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-        
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        
         user = User.query.filter_by(email=email).first()
-        
         if user and bcrypt.check_password_hash(user.password_hash, password):
             login_user(user)
-            flash('Logged in successfully!', 'success')
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
             flash('Login failed. Please check your email and password.', 'danger')
-            
     return render_template('login.html')
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'info')
     return redirect(url_for('index'))
 
 # --- Main Page Routes ---
 
 @app.route('/')
 def index():
-    # Fetch 3 properties to show on the homepage
-    featured_properties = Property.query.limit(3).all()
-    return render_template('index.html', properties=featured_properties)
+    properties = Property.query.limit(3).all()
+    return render_template('index.html', properties=properties)
 
 @app.route('/buy')
 def buy():
-    buy_types = ['House', 'Condo', 'Single-Family Home']
-    properties = Property.query.filter(Property.property_type.in_(buy_types)).all()
+    properties = Property.query.all()
     return render_template('buy.html', properties=properties)
 
 @app.route('/rent')
 def rent():
-    rent_types = ['Apartment', 'Townhouse', 'Rental']
-    properties = Property.query.filter(Property.property_type.in_(rent_types)).all()
+    properties = Property.query.all()
     return render_template('rent.html', properties=properties)
 
 @app.route('/about')
@@ -139,6 +126,33 @@ def about():
 @login_required
 def support():
     return render_template('support.html')
+
+@app.route('/profile')
+@login_required  # Ensures only logged-in users can see this
+def profile():
+    return render_template('profile.html')
+
+# --- NEW ROUTE FOR CONTACT PAGE ---
+@app.route('/contact/<int:property_id>', methods=['GET', 'POST'])
+@login_required
+def contact(property_id):
+    # Find the specific property by its ID, or show a 404 error if not found
+    prop = Property.query.get_or_404(property_id)
+    
+    if request.method == 'POST':
+        # Get the message from the form
+        message = request.form.get('message')
+        
+        # Here you would normally email the agent or save the inquiry.
+        # For this example, we'll just flash a success message.
+        print(f"Inquiry from {current_user.email} about {prop.address}: {message}")
+        
+        flash('Your message has been sent to the agent!', 'success')
+        return redirect(url_for('contact', property_id=prop.id))
+
+    # For a GET request, just show the page with the property info
+    return render_template('contact.html', prop=prop)
+# ----------------------------------
 
 # --- Run the Application ---
 

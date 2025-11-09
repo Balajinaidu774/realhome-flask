@@ -73,11 +73,15 @@
         <a href="{{ url_for('index') }}" class="logo">RealHome</a>
         <nav>
             <ul>
-                <li><a href="{{ url_for('index') }}">Home</a></li>
-                <li><a href="{{ url_for('buy') }}">Buy</a></li>
-                <li><a href="{{ url_for('rent') }}">Rent</a></li>
-                <li><a href="{{ url_for('about') }}" class="active">About Us</a></li>
-                <li><a href="{{ url_for('support') }}">Customer Support</a></li>
+                <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+                <li><a href="{{ url_for('buy') }}" class="nav-link">Buy</a></li>
+                <li><a href="{{ url_for('rent') }}" class="nav-link">Rent</a></li>
+                <li><a href="{{ url_for('about') }}" class="nav-link">About Us</a></li>
+                <li><a href="{{ url_for('support') }}" class="nav-link">Customer Support</a></li>
+                
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('profile') }}" class="nav-link">My Profile</a></li>
+                {% endif %}
             </ul>
         </nav>
         <div class="auth-buttons" id="auth-buttons">
