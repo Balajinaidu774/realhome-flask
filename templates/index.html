@@ -151,7 +151,36 @@
                 display: block; /* Show hamburger button */
             }
         }
-        /* --- End of New Styles --- */
+        .detail-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--color-cta);
+            color: var(--color-cta-text);
+            text-align: center;
+            font-size: 1.1em; /* Slightly smaller for two */
+            font-weight: 700;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            border: none; /* In case it's a button element */
+            cursor: pointer;
+        }
+        .cta-button:hover {
+            background-color: var(--color-cta-hover);
+        }
+        /* New style for the map button */
+        .map-button {
+            background-color: var(--color-primary);
+            color: var(--color-primary-text);
+        }
+        .map-button:hover {
+            background-color: var(--color-primary-hover);
+        }
     </style>
 </head>
 <body>
@@ -181,19 +210,13 @@
                 <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
             {% endif %}
         </div>
-        
-        <!-- --- NEW: Hamburger Menu Button --- -->
         <div id="menu-toggle" class="menu-toggle">
             <span></span>
             <span></span>
             <span></span>
         </div>
-        <!-- --- End of Hamburger Button --- -->
-
     </div>
 </header>
-
-<!-- --- NEW: Mobile Menu Container --- -->
 <div id="mobile-menu" class="mobile-menu">
     <a href="{{ url_for('index') }}" class="nav-link active">Home</a>
     <a href="{{ url_for('buy') }}" class="nav-link">Buy</a>
@@ -210,8 +233,6 @@
         <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
     {% endif %}
 </div>
-<!-- --- End of Mobile Menu --- -->
-
 <section class="hero">
     <h1>Find Your Dream Home in Boston</h1>
     <p>The best properties, based on the Boston Housing dataset.</p>
@@ -234,21 +255,23 @@
             {% for prop in properties %}
             <article 
                 class="listing-card"
-                onclick="showDetails(
+                 onclick="showDetails(
                     '{{ prop.id }}', 
-                    'Boston Property', 
+                    '{{ prop.property_type }}', 
                     '${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}', 
-                    '{{ "{:.1f}".format(prop.rm or 0) }} Rooms (RM) | {{ "{:.1f}".format(prop.ptratio or 0) }} P/T Ratio | {{ "{:.2f}".format(prop.crim or 0) }} Crime Rate', 
-                    'Property ID #{{ prop.id }}', 
-                    '{{ prop.image_url }}'
+                    '{{ "{:.1f}".format(prop.rm) }} Rooms | {{ "{:.1f}".format(prop.ptratio) }} P/T Ratio | {{ "{:.2f}".format(prop.crim) }} Crime Rate', 
+                    '{{ prop.street_name }}, Boston, MA', 
+                    '{{ prop.image_url }}',
+                    '{{ prop.lat }}',
+                    '{{ prop.lon }}',
+                    '{{ prop.description | safe }}'
                 )">
                 <img src="{{ prop.image_url }}" alt="Boston Property"
                      onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Image+Not+Found';">
                 
                 <div class="listing-card-content">
-                    <!-- === THIS LINE IS FIXED === -->
                     <div class="price">${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}</div>
-                    <h3>Property #{{ prop.id }}</h3>
+                    <h3>{{ prop.street_name }}</h3>
                     <div class="details">{{ "{:.1f}".format(prop.rm or 0) }} Rooms | {{ "{:.2f}".format(prop.crim or 0) }} Crime Rate</div>
                     <div class="address">Pupil-Teacher Ratio: {{ prop.ptratio or 'N/A' }}</div>
                 </div>
@@ -278,9 +301,11 @@
         </div>
         <div class="info-section">
             <h3 style="color: var(--color-primary); margin-top: 30px;">Property Description</h3>
-            <p id="detail-description">This is a data tract from the Boston Housing dataset.</p>
+            <p id="detail-description">Loading description...</p>       </div>
+        <div class="detail-buttons">
+            <a id="detail-contact-btn" href="#" class="cta-button">Contact Agent</a>
+            <a id="detail-map-btn" href="#" class="cta-button map-button" target="_blank">View on Map</a>
         </div>
-        <a id="detail-contact-btn" href="#" class="cta-button">Contact Agent</a>
     </div>
 </section>
 <footer>
@@ -290,25 +315,26 @@
 </footer>
 
 <script>
-// The script is now also safer
-function showDetails(propertyId, title, price, details, address, image) {
+    function showDetails(propertyId, title, price, details, address, image, lat, lon, description) {
     const detailsView = document.getElementById('property-details-view');
     const parts = details.split('|').map(p => p.trim());
     
     document.getElementById('detail-title').textContent = title;
     document.getElementById('detail-price').textContent = price;
     document.getElementById('detail-address').textContent = address;
-    document.getElementById('detail-image').src = image; 
+    document.getElementById('detail-image').src = image;
     
     document.getElementById('feature-beds').textContent = parts[0] || 'N/A Rooms';
     document.getElementById('feature-baths').textContent = parts[1] || 'N/A P/T Ratio';
     document.getElementById('feature-area').textContent = parts[2] || 'N/A Crime Rate';
     
-    document.getElementById('detail-description').textContent = 
+    document.getElementById('detail-description').textContent = description || 
         `This data tract, ${address}, is listed for ${price}. 
         Key statistical features include: ${parts.join(', ')}. Contact us for more information.`;
     
     document.getElementById('detail-contact-btn').href = '/contact/' + propertyId;
+    document.getElementById('detail-map-btn').href = `https://www.google.com/maps?q=${lat},${lon}`;
+ 
 
     detailsView.style.display = 'block';
     document.getElementById('detail-title').scrollIntoView({ behavior: 'smooth', block: 'center' });

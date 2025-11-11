@@ -46,12 +46,18 @@ class Property(db.Model):
     b = db.Column(db.Float, nullable=True)
     lstat = db.Column(db.Float, nullable=True)
     medv = db.Column(db.Float, nullable=True)    # Price in $1000s (our "Price")
+    image_url = db.Column(db.String(500), nullable=True) 
+    lat = db.Column(db.Float, nullable=True)     # Latitude
+    lon = db.Column(db.Float, nullable=True)     # Longitude
     
-    # === NEW COLUMN ADDED ===
-    image_url = db.Column(db.String(500), nullable=True)
+    # --- NEW REALISTIC COLUMNS ---
+    property_type = db.Column(db.String(100), nullable=True)
+    street_name = db.Column(db.String(200), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    # -----------------------------
     
     def __repr__(self):
-        return f"Property('ID: {self.id}', 'Price (MEDV): {self.medv}')"
+        return f"Property('{self.street_name}', 'Price (MEDV): {self.medv}')"
 
 # --- User Loader ---
 
