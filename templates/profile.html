@@ -1,9 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - RealHome</title>
     <style>
-        /* ... all theme styles ... */
+        /* --- START THEME STYLES --- */
         :root {
             --color-bg: #f8f9fb;
             --color-surface: #ffffff;
@@ -20,8 +22,6 @@
             --color-cta: #fbbc05;
             --color-cta-text: #333;
             --color-cta-hover: #e7a600;
-            --color-feature-bg: #e8f0fe;
-            --color-feature-text: #005a9e;
         }
         
         @media (prefers-color-scheme: dark) {
@@ -33,30 +33,22 @@
                 --color-heading: #63b3ed;
                 --color-primary: #63b3ed;
                 --color-primary-hover: #90cdf4;
-                --color-primary-text: #1a20_c;
+                --color-primary-text: #1a202c;
                 --color-border: #4a5568;
                 --color-shadow: rgba(0, 0, 0, 0.25);
                 --color-footer-bg: #2d3748;
                 --color-footer-text: #a0aec0;
-                --color-feature-bg: #2c3e50;
-                --color-feature-text: #a6d4fa;
             }
         }
         /* --- END THEME STYLES --- */
 
-        /* All your standard styles */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 0; background-color: var(--color-bg); color: var(--color-text);
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--color-bg); color: var(--color-text); }
         * { box-sizing: border-box; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        header {
-            background-color: var(--color-surface); padding: 15px 0; border-bottom: 1px solid var(--color-border);
-            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px var(--color-shadow);
-        }
+        header { background-color: var(--color-surface); padding: 15px 0; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px var(--color-shadow); }
         header .container { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.6em; font-weight: 700; color: var(--color-primary); text-decoration: none; }
+        nav { display: block; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
         nav li { margin-left: 25px; }
         nav a { text-decoration: none; color: var(--color-text-secondary); font-weight: 600; transition: color 0.3s; }
@@ -69,117 +61,28 @@
         .signup-btn:hover { background-color: var(--color-primary-hover); }
         footer { background-color: var(--color-footer-bg); color: var(--color-footer-text); text-align: center; padding: 30px 20px; margin-top: 60px; }
 
-        /* --- STYLES FOR THIS PAGE --- */
-        .profile-section {
-            max-width: 700px;
-            margin: 50px auto;
-            padding: 40px;
-            background-color: var(--color-surface);
-            border-radius: 10px;
-            box-shadow: 0 8px 25px var(--color-shadow);
-        }
-        .profile-section h1 {
-            color: var(--color-primary);
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 2.2em;
-        }
-        .profile-info {
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--color-border);
-            padding-bottom: 25px;
-        }
-        .profile-info:last-of-type {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 10px;
-        }
-        .profile-info label {
-            font-weight: 600;
-            color: var(--color-text-secondary);
-            font-size: 0.9em;
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 8px;
-        }
-        .profile-info p {
-            font-size: 1.25em;
-            color: var(--color-text);
-            margin: 0;
-        }
-        .profile-actions {
-            text-align: center;
-            margin-top: 40px;
-        }
-        .cta-button {
-            display: inline-block; padding: 12px 25px; background-color: var(--color-cta);
-            color: var(--color-cta-text); text-align: center; font-size: 1em;
-            font-weight: 700; border-radius: 8px; text-decoration: none;
-            transition: background-color 0.3s;
-        }
+        .profile-section { max-width: 700px; margin: 50px auto; padding: 40px; background-color: var(--color-surface); border-radius: 10px; box-shadow: 0 8px 25px var(--color-shadow); }
+        .profile-section h1 { color: var(--color-primary); text-align: center; margin-bottom: 40px; font-size: 2.2em; }
+        .profile-info { margin-bottom: 25px; border-bottom: 1px solid var(--color-border); padding-bottom: 25px; }
+        .profile-info:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 10px; }
+        .profile-info label { font-weight: 600; color: var(--color-text-secondary); font-size: 0.9em; text-transform: uppercase; display: block; margin-bottom: 8px; }
+        .profile-info p { font-size: 1.25em; color: var(--color-text); margin: 0; }
+        .profile-actions { text-align: center; margin-top: 40px; }
+        .cta-button { display: inline-block; padding: 12px 25px; background-color: var(--color-cta); color: var(--color-cta-text); text-align: center; font-size: 1em; font-weight: 700; border-radius: 8px; text-decoration: none; transition: background-color 0.3s; }
         .cta-button:hover { background-color: var(--color-cta-hover); }
-        /* --- END OF NEW STYLES --- */
-
-        /* --- NEW: Mobile Menu Styles --- */
-        .menu-toggle {
-            display: none; /* Hidden by default */
-            cursor: pointer;
-            padding: 10px;
+        
+        .menu-toggle { display: none; cursor: pointer; padding: 10px; }
+        .menu-toggle span { display: block; width: 25px; height: 3px; background-color: var(--color-text); margin: 5px 0; transition: all 0.3s; }
+        .mobile-menu { display: none; position: fixed; top: 69px; left: 0; width: 100%; height: calc(100vh - 69px); background-color: var(--color-surface); z-index: 999; padding: 30px; flex-direction: column; gap: 20px; overflow-y: auto; }
+        .mobile-menu a { color: var(--color-text); font-size: 1.5em; font-weight: 600; text-decoration: none; padding: 10px; border-radius: 5px; transition: background-color 0.2s; }
+        .mobile-menu a:hover, .mobile-menu a.active { background-color: var(--color-bg); color: var(--color-primary); }
+        .mobile-menu .login-btn, .mobile-menu .signup-btn { text-align: center; font-size: 1.2em; }
+        
+        @media (max-width: 900px) { 
+            nav { display: none; }
+            .auth-buttons { display: none; }
+            .menu-toggle { display: block; }
         }
-        .menu-toggle span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background-color: var(--color-text);
-            margin: 5px 0;
-            transition: all 0.3s;
-        }
-        .mobile-menu {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 69px; /* Height of header */
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 69px);
-            background-color: var(--color-surface);
-            z-index: 999;
-            padding: 30px;
-            flex-direction: column;
-            gap: 20px;
-            overflow-y: auto; /* Allow scrolling if many links */
-        }
-        .mobile-menu a {
-            color: var(--color-text);
-            font-size: 1.5em;
-            font-weight: 600;
-            text-decoration: none;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.2s;
-        }
-        .mobile-menu a:hover, .mobile-menu a.active {
-            background-color: var(--color-bg);
-            color: var(--color-primary);
-        }
-        .mobile-menu .login-btn, .mobile-menu .signup-btn {
-            text-align: center;
-            font-size: 1.2em;
-        }
-        /* --- End of New Styles --- */
-
-        /* --- NEW: Media Query for Responsiveness --- */
-        @media (max-width: 900px) { /* Breakpoint when nav items start to wrap */
-            nav {
-                display: none; /* Hide desktop nav links */
-            }
-            .auth-buttons {
-                display: none; /* Hide desktop auth buttons */
-            }
-            .menu-toggle {
-                display: block; /* Show hamburger button */
-            }
-        }
-        /* --- End of New Styles --- */
     </style>
 </head>
 <body>
@@ -193,8 +96,6 @@
                 <li><a href="{{ url_for('rent') }}" class="nav-link">Rent</a></li>
                 <li><a href="{{ url_for('about') }}" class="nav-link">About Us</a></li>
                 <li><a href="{{ url_for('support') }}" class="nav-link">Customer Support</a></li>
-                
-                <!-- This link is now active -->
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('profile') }}" class="nav-link active">My Profile</a></li>
                 {% endif %}
@@ -211,19 +112,14 @@
                 <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
             {% endif %}
         </div>
-
-        <!-- --- NEW: Hamburger Menu Button --- -->
         <div id="menu-toggle" class="menu-toggle">
             <span></span>
             <span></span>
             <span></span>
         </div>
-        <!-- --- End of Hamburger Button --- -->
-
     </div>
 </header>
 
-<!-- --- NEW: Mobile Menu Container --- -->
 <div id="mobile-menu" class="mobile-menu">
     <a href="{{ url_for('index') }}" class="nav-link">Home</a>
     <a href="{{ url_for('buy') }}" class="nav-link">Buy</a>
@@ -240,7 +136,6 @@
         <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
     {% endif %}
 </div>
-<!-- --- End of Mobile Menu --- -->
 
 <main class="container">
     <section class="profile-section">
@@ -269,7 +164,6 @@
     </div>
 </footer>
 
-<!-- --- NEW: Mobile Menu Toggle Script --- -->
 <script>
 document.getElementById('menu-toggle').addEventListener('click', function() {
     var mobileMenu = document.getElementById('mobile-menu');
@@ -280,7 +174,5 @@ document.getElementById('menu-toggle').addEventListener('click', function() {
     }
 });
 </script>
-<!-- --- End of New Script --- -->
-
 </body>
 </html>

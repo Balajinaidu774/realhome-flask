@@ -1,9 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Agent - RealHome</title>
     <style>
-        /* ... all your theme styles ... */
+        /* --- START THEME STYLES --- */
         :root {
             --color-bg: #f8f9fb;
             --color-surface: #ffffff;
@@ -24,8 +26,6 @@
             --color-feature-text: #005a9e;
             --color-flash-success-bg: #d4edda;
             --color-flash-success-text: #155724;
-            --color-flash-danger-bg: #f8d7da;
-            --color-flash-danger-text: #721c24;
         }
         
         @media (prefers-color-scheme: dark) {
@@ -46,16 +46,17 @@
                 --color-feature-text: #a6d4fa;
                 --color-flash-success-bg: #2f4a39;
                 --color-flash-success-text: #b8f2d5;
-                --color-flash-danger-bg: #5a2c32;
-                --color-flash-danger-text: #fbcad1;
             }
         }
+        /* --- END THEME STYLES --- */
+
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--color-bg); color: var(--color-text); }
         * { box-sizing: border-box; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background-color: var(--color-surface); padding: 15px 0; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px var(--color-shadow); }
         header .container { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.6em; font-weight: 700; color: var(--color-primary); text-decoration: none; }
+        nav { display: block; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
         nav li { margin-left: 25px; }
         nav a { text-decoration: none; color: var(--color-text-secondary); font-weight: 600; transition: color 0.3s; }
@@ -68,144 +69,38 @@
         .signup-btn:hover { background-color: var(--color-primary-hover); }
         footer { background-color: var(--color-footer-bg); color: var(--color-footer-text); text-align: center; padding: 30px 20px; margin-top: 40px; }
         
-        .contact-section {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 40px;
-            background-color: var(--color-surface);
-            border-radius: 10px;
-            box-shadow: 0 8px 25px var(--color-shadow);
-        }
-        .contact-section h1 {
-            color: var(--color-primary);
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .property-preview {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: var(--color-bg);
-            border-radius: 8px;
-            border: 1px solid var(--color-border);
-        }
-        .property-preview img {
-            width: 150px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-        .property-preview-info h3 {
-            margin: 0 0 10px;
-            color: var(--color-heading);
-        }
-        .property-preview-info p {
-            margin: 0;
-            color: var(--color-text-secondary);
-        }
+        .contact-section { max-width: 800px; margin: 50px auto; padding: 40px; background-color: var(--color-surface); border-radius: 10px; box-shadow: 0 8px 25px var(--color-shadow); }
+        .contact-section h1 { color: var(--color-primary); text-align: center; margin-bottom: 30px; }
+        .property-preview { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; padding: 20px; background-color: var(--color-bg); border-radius: 8px; border: 1px solid var(--color-border); }
+        .property-preview img { width: 150px; height: 100px; object-fit: cover; border-radius: 5px; }
+        .property-preview-info { flex: 1; min-width: 200px; }
+        .property-preview-info h3 { margin: 0 0 10px; color: var(--color-heading); }
+        .property-preview-info p { margin: 0; color: var(--color-text-secondary); }
         
         form { display: flex; flex-direction: column; gap: 20px; }
         form div { display: flex; flex-direction: column; }
         form label { font-weight: 600; margin-bottom: 5px; color: var(--color-text); }
-        form input, form textarea {
-            padding: 12px;
-            border: 1px solid var(--color-border);
-            border-radius: 6px;
-            font-size: 1em;
-            background-color: var(--color-surface);
-            color: var(--color-text);
-        }
-        form input:disabled {
-            background-color: var(--color-bg);
-            color: var(--color-text-secondary);
-        }
-        form textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-        form button {
-            background-color: var(--color-cta);
-            color: var(--color-cta-text);
-            font-size: 1.1em;
-            font-weight: 700;
-            border: none;
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        form button:hover {
-            background-color: var(--color-cta-hover);
-        }
+        form input, form textarea { padding: 12px; border: 1px solid var(--color-border); border-radius: 6px; font-size: 1em; background-color: var(--color-surface); color: var(--color-text); }
+        form input:disabled { background-color: var(--color-bg); color: var(--color-text-secondary); }
+        form textarea { min-height: 150px; resize: vertical; }
+        form button { background-color: var(--color-cta); color: var(--color-cta-text); font-size: 1.1em; font-weight: 700; border: none; padding: 15px; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; }
+        form button:hover { background-color: var(--color-cta-hover); }
+        
         .flash-messages { list-style: none; padding: 0; margin-bottom: 20px; }
-        .flash-success { 
-            background-color: var(--color-flash-success-bg); 
-            color: var(--color-flash-success-text); 
-            padding: 10px 15px; 
-            border-radius: 5px; 
+        .flash-success { background-color: var(--color-flash-success-bg); color: var(--color-flash-success-text); padding: 10px 15px; border-radius: 5px; }
+        
+        .menu-toggle { display: none; cursor: pointer; padding: 10px; }
+        .menu-toggle span { display: block; width: 25px; height: 3px; background-color: var(--color-text); margin: 5px 0; transition: all 0.3s; }
+        .mobile-menu { display: none; position: fixed; top: 69px; left: 0; width: 100%; height: calc(100vh - 69px); background-color: var(--color-surface); z-index: 999; padding: 30px; flex-direction: column; gap: 20px; overflow-y: auto; }
+        .mobile-menu a { color: var(--color-text); font-size: 1.5em; font-weight: 600; text-decoration: none; padding: 10px; border-radius: 5px; transition: background-color 0.2s; }
+        .mobile-menu a:hover, .mobile-menu a.active { background-color: var(--color-bg); color: var(--color-primary); }
+        .mobile-menu .login-btn, .mobile-menu .signup-btn { text-align: center; font-size: 1.2em; }
+        
+        @media (max-width: 900px) { 
+            nav { display: none; }
+            .auth-buttons { display: none; }
+            .menu-toggle { display: block; }
         }
-
-        /* --- NEW: Mobile Menu Styles --- */
-        .menu-toggle {
-            display: none; /* Hidden by default */
-            cursor: pointer;
-            padding: 10px;
-        }
-        .menu-toggle span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background-color: var(--color-text);
-            margin: 5px 0;
-            transition: all 0.3s;
-        }
-        .mobile-menu {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 69px; /* Height of header */
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 69px);
-            background-color: var(--color-surface);
-            z-index: 999;
-            padding: 30px;
-            flex-direction: column;
-            gap: 20px;
-            overflow-y: auto; /* Allow scrolling if many links */
-        }
-        .mobile-menu a {
-            color: var(--color-text);
-            font-size: 1.5em;
-            font-weight: 600;
-            text-decoration: none;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.2s;
-        }
-        .mobile-menu a:hover, .mobile-menu a.active {
-            background-color: var(--color-bg);
-            color: var(--color-primary);
-        }
-        .mobile-menu .login-btn, .mobile-menu .signup-btn {
-            text-align: center;
-            font-size: 1.2em;
-        }
-        /* --- End of New Styles --- */
-
-        /* --- NEW: Media Query for Responsiveness --- */
-        @media (max-width: 900px) { /* Breakpoint when nav items start to wrap */
-            nav {
-                display: none; /* Hide desktop nav links */
-            }
-            .auth-buttons {
-                display: none; /* Hide desktop auth buttons */
-            }
-            .menu-toggle {
-                display: block; /* Show hamburger button */
-            }
-        }
-        /* --- End of New Styles --- */
     </style>
 </head>
 <body>
@@ -236,19 +131,14 @@
                 <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
             {% endif %}
         </div>
-
-        <!-- --- NEW: Hamburger Menu Button --- -->
         <div id="menu-toggle" class="menu-toggle">
             <span></span>
             <span></span>
             <span></span>
         </div>
-        <!-- --- End of Hamburger Button --- -->
-
     </div>
 </header>
 
-<!-- --- NEW: Mobile Menu Container --- -->
 <div id="mobile-menu" class="mobile-menu">
     <a href="{{ url_for('index') }}" class="nav-link">Home</a>
     <a href="{{ url_for('buy') }}" class="nav-link">Buy</a>
@@ -265,7 +155,6 @@
         <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
     {% endif %}
 </div>
-<!-- --- End of Mobile Menu --- -->
 
 <main class="container">
     <section class="contact-section">
@@ -282,12 +171,11 @@
         {% endwith %}
 
         <div class="property-preview">
-            <img src="{{ prop.image_url }}" alt="Property #{{ prop.id }}"
+            <img src="{{ prop.image_url }}" alt="{{ prop.street_name }}"
                  onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Image+Not+Found';">
             <div class="property-preview-info">
-                <h3>Inquiry about: Property #{{ prop.id }}</h3>
+                <h3>Inquiry about: {{ prop.street_name }}</h3>
                 <p><strong>Property ID:</strong> {{ prop.id }}</p>
-                <!-- === THIS LINE IS FIXED === -->
                 <p><strong>Price:</strong> ${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}</p>
             </div>
         </div>
@@ -317,7 +205,6 @@
     </div>
 </footer>
 
-<!-- --- NEW: Mobile Menu Toggle Script --- -->
 <script>
 document.getElementById('menu-toggle').addEventListener('click', function() {
     var mobileMenu = document.getElementById('mobile-menu');
@@ -328,7 +215,5 @@ document.getElementById('menu-toggle').addEventListener('click', function() {
     }
 });
 </script>
-<!-- --- End of New Script --- -->
-
 </body>
 </html>

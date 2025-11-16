@@ -1,7 +1,11 @@
+<!DOCTYPE html>
+<html>
 <head>
-    <title>RealHome – Rent Properties</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Properties - RealHome</title>
     <style>
-        /* ... all theme styles ... */
+        /* ... all your existing theme and mobile styles ... */
         :root {
             --color-bg: #f8f9fb;
             --color-surface: #ffffff;
@@ -40,42 +44,14 @@
                 --color-feature-text: #a6d4fa;
             }
         }
-        .detail-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-        .cta-button {
-            display: inline-block;
-            padding: 15px 30px;
-            background-color: var(--color-cta);
-            color: var(--color-cta-text);
-            text-align: center;
-            font-size: 1.1em; /* Slightly smaller for two */
-            font-weight: 700;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-            border: none; /* In case it's a button element */
-            cursor: pointer;
-        }
-        .cta-button:hover {
-            background-color: var(--color-cta-hover);
-        }
-        /* New style for the map button */
-        .map-button {
-            background-color: var(--color-primary);
-            color: var(--color-primary-text);
-        }
-        .map-button:hover {
-            background-color: var(--color-primary-hover);
-        }
+        /* ... */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--color-bg); color: var(--color-text); }
         * { box-sizing: border-box; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background-color: var(--color-surface); padding: 15px 0; border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px var(--color-shadow); }
         header .container { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.6em; font-weight: 700; color: var(--color-primary); text-decoration: none; }
+        nav { display: block; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
         nav li { margin-left: 25px; }
         nav a { text-decoration: none; color: var(--color-text-secondary); font-weight: 600; transition: color 0.3s; }
@@ -86,95 +62,82 @@
         .login-btn:hover { background-color: var(--color-primary); color: var(--color-primary-text); }
         .signup-btn { background-color: var(--color-primary); color: var(--color-primary-text); border: 1px solid var(--color-primary); }
         .signup-btn:hover { background-color: var(--color-primary-hover); }
-        .hero { background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('https://images.homify.com/c_fill,f_auto,q_auto,w_740/v1438221622/p/photo/image/170280/IMG_1510.jpg'); background-size: cover; background-position: center; color: white; text-align: center; padding: 110px 20px; }
-        .hero h1 { font-size: 3em; margin: 0 0 15px; }
+
+        .hero { background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg'); background-size: cover; background-position: center; color: white; padding: 100px 20px; text-align: center; }
+        .hero h1 { font-size: 3em; margin-bottom: 20px; }
         .hero p { font-size: 1.2em; margin-bottom: 30px; }
-        .listings-section { padding: 60px 0; }
+
+        .search-bar-container { background-color: var(--color-surface); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px var(--color-shadow); margin: 40px auto; max-width: 1200px; }
+        .search-form { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; }
+        .search-field { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
+        .search-field label { font-size: 0.9em; font-weight: 600; color: var(--color-text-secondary); }
+        .search-field input, .search-field select { padding: 12px; border: 1px solid var(--color-border); border-radius: 8px; font-size: 1em; background-color: var(--color-bg); color: var(--color-text); }
+        .search-button { background-color: var(--color-primary); color: var(--color-primary-text); font-size: 1em; font-weight: 600; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; height: 47px; }
+        .search-button:hover { background-color: var(--color-primary-hover); }
+        
+        .view-more-container { text-align: center; margin: 40px 0 20px; }
+        #view-more-btn { background-color: var(--color-primary); color: var(--color-primary-text); font-size: 1em; font-weight: 600; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; transition: background-color 0.3s; }
+        #view-more-btn:hover { background-color: var(--color-primary-hover); }
+        #view-more-btn.hidden { display: none; }
+        
+        .listings-section { padding: 60px 20px; }
         .listings-section h2 { text-align: center; font-size: 2.5em; margin-bottom: 40px; color: var(--color-heading); }
         .listings-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
-        .listing-card { background-color: var(--color-surface); border-radius: 8px; box-shadow: 0 4px 10px var(--color-shadow); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; }
+        /* --- THIS RULE IS FIXED --- */
+        .listing-card { 
+             background-color: var(--color-surface); 
+            border-radius: 8px; 
+            box-shadow: 0 4px 10px var(--color-shadow); 
+            overflow: hidden; 
+            transition: transform 0.3s, box-shadow 0.3s; 
+            cursor: pointer; 
+            display: none;
+        }
         .listing-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px var(--color-shadow); }
-        .listing-card img { width: 100%; height: 220px; object-fit: cover; }
+        .listing-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
         .listing-card-content { padding: 20px; }
         .listing-card-content h3 { font-size: 1.5em; margin: 0 0 10px; color: var(--color-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .listing-card-content .price { font-size: 1.4em; font-weight: 700; color: var(--color-text); margin-bottom: 15px; }
-        .listing-card-content .details { color: var(--color-text-secondary); margin-bottom: 15px; }
-        .listing-card-content .address { color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .listing-card-content .price { font-size: 1.5em; font-weight: 700; color: var(--color-text); margin-bottom: 15px; }
+        .listing-card-content .details { font-size: 1em; color: var(--color-text-secondary); margin-bottom: 15px; }
+        .listing-card-content .address { font-size: 0.95em; color: var(--color-text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        footer { background-color: var(--color-footer-bg); color: var(--color-footer-text); text-align: center; padding: 30px 20px; margin-top: 40px; }
+        
         #property-details-view { display: none; padding: 60px 0; background-color: var(--color-surface); margin-top: 40px; border-top: 2px solid var(--color-border); }
         #detail-title { font-size: 3em; color: var(--color-heading); margin-bottom: 10px; }
         #detail-price { font-size: 2.5em; font-weight: 700; color: var(--color-text); margin-bottom: 20px; }
         #detail-address { font-size: 1.2em; color: var(--color-text-secondary); margin-bottom: 20px; }
         #detail-image { width: 100%; height: 500px; object-fit: cover; border-radius: 8px; margin-bottom: 30px; }
-        .key-features { display: flex; gap: 15px; margin-top: 20px; }
+        .key-features { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; }
         .feature-item { background-color: var(--color-feature-bg); padding: 10px 15px; border-radius: 5px; font-weight: 600; color: var(--color-feature-text); }
-        .cta-button { display: inline-block; padding: 15px 30px; background-color: var(--color-cta); color: var(--color-cta-text); text-align: center; font-size: 1.2em; font-weight: 700; border-radius: 8px; margin-top: 30px; text-decoration: none; transition: background-color 0.3s; }
+        
+        .detail-buttons { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 30px; }
+        .cta-button { display: inline-block; padding: 15px 30px; background-color: var(--color-cta); color: var(--color-cta-text); text-align: center; font-size: 1.1em; font-weight: 700; border-radius: 8px; text-decoration: none; transition: background-color 0.3s; border: none; cursor: pointer; }
         .cta-button:hover { background-color: var(--color-cta-hover); }
-        footer { background-color: var(--color-footer-bg); color: var(--color-footer-text); text-align: center; padding: 30px 20px; margin-top: 50px; }
-
-        /* --- NEW: Mobile Menu Styles --- */
-        .menu-toggle {
-            display: none; /* Hidden by default */
-            cursor: pointer;
-            padding: 10px;
+        .map-button { background-color: var(--color-primary); color: var(--color-primary-text); }
+        .map-button:hover { background-color: var(--color-primary-hover); }
+        #detail-description { line-height: 1.6; color: var(--color-text-secondary); }
+        
+        .menu-toggle { display: none; cursor: pointer; padding: 10px; }
+        .menu-toggle span { display: block; width: 25px; height: 3px; background-color: var(--color-text); margin: 5px 0; transition: all 0.3s; }
+        .mobile-menu { display: none; position: fixed; top: 69px; left: 0; width: 100%; height: calc(100vh - 69px); background-color: var(--color-surface); z-index: 999; padding: 30px; flex-direction: column; gap: 20px; overflow-y: auto; }
+        .mobile-menu a { color: var(--color-text); font-size: 1.5em; font-weight: 600; text-decoration: none; padding: 10px; border-radius: 5px; transition: background-color 0.2s; }
+        .mobile-menu a:hover, .mobile-menu a.active { background-color: var(--color-bg); color: var(--color-primary); }
+        .mobile-menu .login-btn, .mobile-menu .signup-btn { text-align: center; font-size: 1.2em; }
+        
+        @media (max-width: 900px) { 
+            nav { display: none; }
+            .auth-buttons { display: none; }
+            .menu-toggle { display: block; }
         }
-        .menu-toggle span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background-color: var(--color-text);
-            margin: 5px 0;
-            transition: all 0.3s;
+        @media (max-width: 768px) {
+            .search-form { flex-direction: column; align-items: stretch; }
+            .search-button { height: auto; font-size: 1.1em; }
         }
-        .mobile-menu {
-            display: none; /* Hidden by default */
-            position: fixed;
-            top: 69px; /* Height of header */
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 69px);
-            background-color: var(--color-surface);
-            z-index: 999;
-            padding: 30px;
-            flex-direction: column;
-            gap: 20px;
-            overflow-y: auto; /* Allow scrolling if many links */
-        }
-        .mobile-menu a {
-            color: var(--color-text);
-            font-size: 1.5em;
-            font-weight: 600;
-            text-decoration: none;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.2s;
-        }
-        .mobile-menu a:hover, .mobile-menu a.active {
-            background-color: var(--color-bg);
-            color: var(--color-primary);
-        }
-        .mobile-menu .login-btn, .mobile-menu .signup-btn {
-            text-align: center;
-            font-size: 1.2em;
-        }
-        /* --- End of New Styles --- */
-
-        /* --- NEW: Media Query for Responsiveness --- */
-        @media (max-width: 900px) { /* Breakpoint when nav items start to wrap */
-            nav {
-                display: none; /* Hide desktop nav links */
-            }
-            .auth-buttons {
-                display: none; /* Hide desktop auth buttons */
-            }
-            .menu-toggle {
-                display: block; /* Show hamburger button */
-            }
-        }
-        /* --- End of New Styles --- */
     </style>
 </head>
 <body>
-<header>
+    <header>
     <div class="container">
         <a href="{{ url_for('index') }}" class="logo">RealHome</a>
         <nav>
@@ -200,19 +163,13 @@
                 <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
             {% endif %}
         </div>
-
-        <!-- --- NEW: Hamburger Menu Button --- -->
         <div id="menu-toggle" class="menu-toggle">
             <span></span>
             <span></span>
             <span></span>
         </div>
-        <!-- --- End of Hamburger Button --- -->
-
     </div>
 </header>
-
-<!-- --- NEW: Mobile Menu Container --- -->
 <div id="mobile-menu" class="mobile-menu">
     <a href="{{ url_for('index') }}" class="nav-link">Home</a>
     <a href="{{ url_for('buy') }}" class="nav-link">Buy</a>
@@ -229,83 +186,118 @@
         <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
     {% endif %}
 </div>
-<!-- --- End of Mobile Menu --- -->
+    <section class="hero">
+        <h1>Find Your Perfect Rental Home</h1>
+        <p>Discover homes that match your lifestyle and budget.</p>
+    </section>
 
-<section class="hero">
-    <h1>Find Your Perfect Rental Home</h1>
-    <p>Discover homes that match your lifestyle and budget.</p>
-</section>
-<main class="listings-section">
-    <div class="container">
-        <h2>Featured Properties for Rent</h2>
-        <div class="listings-container">
-            
-            <!-- === THIS LINE IS FIXED === -->
-            {% for prop in properties %}
-            {% set rent_price = (prop.medv or 0) * 10 %} <!-- Faking rent price -->
-            <article class="listing-card"
-                     onclick="showDetails(
-                            '{{ prop.id }}',
-                            '{{ prop.property_type }}', 
-                            '${{ "{:,.0f}".format((prop.medv or 0) * 10) }} / month', 
-                            '{{ "{:.1f}".format(prop.rm) }} Rooms | {{ "{:.1f}".format(prop.ptratio) }} P/T Ratio | {{ "{:.2f}".format(prop.crim) }} Crime Rate', 
-                            '{{ prop.street_name }}, Boston, MA', 
-                            '{{ prop.image_url }}',
-                            '{{ prop.lat }}',
-                            '{{ prop.lon }}',
-                            '{{ prop.description | safe }}'
-                     )">
-                <img src="{{ prop.image_url }}" alt="Boston Property"
-                     onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Image+Not+Found';">
-                
-                <div class="listing-card-content">
-                    <div class="price">${{ "{:,.0f}".format(rent_price) }} / month</div>
- <h3>{{ prop.street_name }}</h3>                    <div class="details">{{ "{:.1f}".format(prop.rm or 0) }} Rooms | {{ "{:.2f}".format(prop.crim or 0) }} Crime Rate</div>
-                    <div class="address">Pupil-Teacher Ratio: {{ prop.ptratio or 'N/A' }}</div>
-                </div>
-            </article>
-            {% else %}
-            <p>No properties for rent. Run the seed.py script!</p>
-            {% endfor %}
-
-        </div>
-    </div>
-</main>
-<section id="property-details-view">
-    <div class="container">
-        <button onclick="hideDetails()" class="cta-button" style="background-color: #ccc; float: right; margin-top: -20px; border: none; cursor: pointer;">Close [X]</button>
-        <img id="detail-image" src="" alt="Property Image"
-             onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Image+Not+Found';">
-        <h1 id="detail-title"></h1>
-        <p id="detail-address"></p>
-        <p id="detail-price"></p>
-        <div class="info-section">
-            <h3 style="color: var(--color-primary);">Key Details</h3>
-            <div class="key-features">
-                <div class="feature-item" id="feature-beds"></div>
-                <div class="feature-item" id="feature-baths"></div>
-                <div class="feature-item" id="feature-area"></div>
+    <div class="search-bar-container container">
+        <form class="search-form" method="GET" action="{{ url_for('rent') }}">
+            <div class="search-field">
+                <label for="search-location">Location (Street Name)</label>
+                <input type="text" id="search-location" name="search_location" 
+                       placeholder="e.g. Beacon St" 
+                       value="{{ search_params.get('search_location', '') }}">
             </div>
+            <div class="search-field">
+                <label for="search-type">Property Type</label>
+                <select id="search-type" name="search_type">
+                    <option value="">All Types</option>
+                    {% for type in property_types %}
+                    <option value="{{ type }}" 
+                            {% if search_params.get('search_type') == type %}selected{% endif %}>
+                        {{ type }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="search-field">
+                <label for="search-price-rent">Price</label>
+                <select id="search-price-rent" name="search_price_rent">
+                    <option value="">Any Price</option>
+                    <option value="1" {% if search_params.get('search_price_rent') == '1' %}selected{% endif %}>Under $3,000/mo</option>
+                    <option value="2" {% if search_params.get('search_price_rent') == '2' %}selected{% endif %}>$3,000 - $6,000/mo</option>
+                    <option value="3" {% if search_params.get('search_price_rent') == '3' %}selected{% endif %}>Over $6,000/mo</option>
+                </select>
+            </div>
+            <button type="submit" class="search-button">Search</button>
+        </form>
+    </div>
+
+    <main class="listings-section">
+        <div class="container">
+            <h2>Featured Properties for Rent</h2>
+            <div class="listings-container">
+                
+                {% for prop in properties %}
+                <article class="listing-card"
+                        onclick='showDetails(
+                            "{{ prop.id }}",
+                            {{ prop.property_type | tojson }}, 
+                            "${{ "{:,.0f}".format((prop.medv or 0) * 10) }} / month", 
+                            "{{ "{:.1f}".format(prop.rm) }} Rooms | {{ "{:.1f}".format(prop.ptratio) }} P/T Ratio | {{ "{:.2f}".format(prop.crim) }} Crime Rate", 
+                            {{ (prop.street_name + ", Boston, MA") | tojson }}, 
+                            {{ prop.image_url | tojson }},
+                            "{{ prop.lat }}",
+                            "{{ prop.lon }}",
+                            {{ prop.description | tojson }}
+                         )'>
+                    <img src="{{ prop.image_url }}" alt="{{ prop.property_type }}"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Property+Image';">
+                    <div class="listing-card-content">
+                        <div class="price">${{ "{:,.0f}".format((prop.medv or 0) * 10) }} / month</div>
+                        <h3>{{ prop.street_name }}</h3>
+                        <div class="details">{{ "{:.1f}".format(prop.rm) }} Rooms | {{ "{:.2f}".format(prop.crim) }} Crime Rate</div>
+                        <div class="address">{{ prop.property_type }} in Boston, MA</div>
+                    </div>
+                </article>
+                {% else %}
+                <p style="color: var(--color-text-secondary); grid-column: 1 / -1; text-align: center;">
+                    No properties match your search criteria. Try broadening your search.
+                </p>
+                {% endfor %}
+            </div>
+
+            <div class="view-more-container">
+                <button id="view-more-btn">View More</button>
+            </div>
+
         </div>
-        <div class="info-section">
-            <h3 style="color: var(--color-primary); margin-top: 30px;">Property Description</h3>
-            <p id="detail-description">Loading description...</p>
-        </div>
+    </main>
+    <section id="property-details-view">
+        <div class="container">
+            <button onclick="hideDetails()" class="cta-button" style="background-color: #ccc; float: right; margin-top: -20px; border: none; cursor: pointer;">Close [X]</button>
+            <img id="detail-image" src="" alt="Property Image">
+            <h1 id="detail-title"></h1>
+            <p id="detail-address"></p>
+            <p id="detail-price"></p>
+            <div class="info-section">
+                <h3 style="color: var(--color-primary);">Key Details</h3>
+                <div class="key-features">
+                    <div class="feature-item" id="feature-beds"></div>
+                    <div class="feature-item" id="feature-baths"></div>
+                    <div class="feature-item" id="feature-area"></div>
+                </div>
+            </div>
+            <div class="info-section">
+                <h3 style="color: var(--color-primary); margin-top: 30px;">Property Description</h3>
+                <p id="detail-description">This is a data tract from the Boston Housing dataset.</p>
+            </div>
+
             <div class="detail-buttons">
                 <a id="detail-contact-btn" href="#" class="cta-button">Contact Agent</a>
                 <a id="detail-map-btn" href="#" class="cta-button map-button" target="_blank">View on Map</a>
             </div>
         </div>
-</section>
-<footer>
-    <div class="container">
-        <p>&copy; 2025 RealHome. All rights reserved.</p>
-    </div>
-</footer>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 RealHome. All rights reserved.</p>
+        </div>
+    </footer>
 
-<script>
-    // This script is now also safer
-        function showDetails(propertyId, title, price, details, address, image, lat, lon, description) {
+    <script>
+    function showDetails(propertyId, title, price, details, address, image, lat, lon, description) {
         const detailsView = document.getElementById('property-details-view');
         const parts = details.split('|').map(p => p.trim());
         
@@ -318,20 +310,22 @@
         document.getElementById('feature-baths').textContent = parts[1] || 'N/A P/T Ratio';
         document.getElementById('feature-area').textContent = parts[2] || 'N/A Crime Rate';
         
-        // --- UPDATED: Use the new description ---
         document.getElementById('detail-description').textContent = description || 
             `This data tract, ${address}, is listed for ${price}. 
             Key statistical features include: ${parts.join(', ')}. Contact us for more information.`;
+        
         document.getElementById('detail-contact-btn').href = '/contact/' + propertyId;
         document.getElementById('detail-map-btn').href = `https://www.google.com/maps?q=${lat},${lon}`;
+
         detailsView.style.display = 'block';
         document.getElementById('detail-title').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+
     function hideDetails() {
         document.getElementById('property-details-view').style.display = 'none';
     }
 
-    /* --- NEW: Mobile Menu Toggle Script --- */
+    /* Mobile Menu Toggle Script */
     document.getElementById('menu-toggle').addEventListener('click', function() {
         var mobileMenu = document.getElementById('mobile-menu');
         if (mobileMenu.style.display === 'flex') {
@@ -340,7 +334,54 @@
             mobileMenu.style.display = 'flex';
         }
     });
-    /* --- End of New Script --- */
-</script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const allCards = document.querySelectorAll('.listing-card');
+        const viewMoreBtn = document.getElementById('view-more-btn');
+        
+        try {
+            const cardsPerLoad = 9; // Show 9 cards at a time
+            let visibleCards = 0;
+
+            function showNextCards() {
+                let newlyVisible = 0;
+                for (let i = 0; i < allCards.length; i++) {
+                    if (allCards[i].style.display !== 'block') { // Find the next hidden card
+                        allCards[i].style.display = 'block';
+                        newlyVisible++;
+                        visibleCards++;
+                    }
+                    if (newlyVisible >= cardsPerLoad) {
+                        break; // Stop after showing a batch
+                    }
+                }
+                
+                // Hide button if no more cards are hidden
+                if (visibleCards >= allCards.length) {
+                    if (viewMoreBtn) viewMoreBtn.classList.add('hidden');
+                }
+            }
+
+            // Show the first batch
+            showNextCards(); 
+
+            // Add click listener
+            if (viewMoreBtn) {
+                viewMoreBtn.addEventListener('click', showNextCards);
+            }
+
+            // Hide button if all cards are visible from the start
+            if (allCards.length <= cardsPerLoad) {
+                if (viewMoreBtn) viewMoreBtn.classList.add('hidden');
+            }
+        } catch (e) {
+            console.error("Error in View More script:", e);
+            // --- FAILSAFE ---
+            // If script fails, show all cards to prevent blank page.
+            allCards.forEach(card => card.style.display = 'block');
+            if (viewMoreBtn) viewMoreBtn.classList.add('hidden'); // Hide button
+        }
+    });
+    </script>
 </body>
 </html>
