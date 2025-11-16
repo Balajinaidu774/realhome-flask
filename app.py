@@ -7,6 +7,10 @@ from sqlalchemy import func
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 import numpy as np
+import hashlib
+import datetime
+import json
+from utils.proof import compute_sha256, make_merkle_root, anchor_to_ledger
 
 # --- Model Training ---
 model = LinearRegression()
@@ -87,10 +91,103 @@ class Property(db.Model):
     builder = db.Column(db.String(100), nullable=True)
     quality_verified = db.Column(db.Boolean, default=False)
     last_verified_on = db.Column(db.String(50), nullable=True)
+    provenance_score = db.Column(db.Float, nullable=True, default=0.0)
+    provenance_summary = db.Column(db.Text, nullable=True)
     # -------------------------------------
     
     def __repr__(self):
         return f"Property('{self.street_name}', Verified: {self.quality_verified})"
+
+
+# --- Verification Model ---
+class Verification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
+    role = db.Column(db.String(50), nullable=False)
+    contributor_name = db.Column(db.String(200), nullable=True)
+    contributor_pubkey = db.Column(db.String(500), nullable=True)
+    doc_url = db.Column(db.String(1000), nullable=True)
+    doc_hash = db.Column(db.String(128), nullable=False)
+    attestation_level = db.Column(db.String(50), nullable=False, default='self')
+    verifier = db.Column(db.String(200), nullable=True)
+    verification_tx = db.Column(db.String(500), nullable=True)
+    score = db.Column(db.Float, nullable=True, default=0.0)
+    notes = db.Column(db.Text, nullable=True)
+    created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    property = db.relationship('Property', backref=db.backref('verifications', lazy=True))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'property_id': self.property_id,
+            'role': self.role,
+            'contributor_name': self.contributor_name,
+            'doc_url': self.doc_url,
+            'doc_hash': self.doc_hash,
+            'attestation_level': self.attestation_level,
+            'verifier': self.verifier,
+            'verification_tx': self.verification_tx,
+            'score': self.score,
+            'notes': self.notes,
+            'created_on': self.created_on.isoformat()
+        }
+
+# --- Simple provenance scoring helpers ---
+ATTESTATION_WEIGHT = {
+    'self': 0.3,
+    'third_party': 0.8,
+    'on_chain': 1.0
+}
+
+def compute_doc_hash(value: str) -> str:
+    # Compute SHA-256 of the provided value (doc_url or raw content)
+    return hashlib.sha256(value.encode('utf-8')).hexdigest()
+
+def recompute_provenance(property_obj):
+    verifs = Verification.query.filter_by(property_id=property_obj.id).all()
+    if not verifs:
+        property_obj.provenance_score = 0.0
+        property_obj.provenance_summary = None
+        return
+    total = 0.0
+    details = []
+    for v in verifs:
+        w = ATTESTATION_WEIGHT.get(v.attestation_level, 0.3)
+        s = (v.score if v.score is not None else 0.5) * w
+        total += s
+        details.append({'role': v.role, 'contributor': v.contributor_name, 'score': v.score, 'attestation': v.attestation_level})
+    avg = total / len(verifs)
+    # normalize to 0..1
+    prop_score = max(0.0, min(1.0, avg))
+    property_obj.provenance_score = prop_score
+    property_obj.provenance_summary = json.dumps(details)
+    db.session.add(property_obj)
+    db.session.commit()
+
+
+# --- Ensure DB has provenance columns (simple runtime migration for SQLite) ---
+def ensure_provenance_columns():
+    try:
+        with app.app_context():
+            # Try to add columns if they don't exist (SQLite supports ADD COLUMN)
+            from sqlalchemy import text
+            conn = db.engine.connect()
+            try:
+                conn.execute(text('ALTER TABLE property ADD COLUMN provenance_score REAL DEFAULT 0.0'))
+            except Exception:
+                pass
+            try:
+                conn.execute(text('ALTER TABLE property ADD COLUMN provenance_summary TEXT'))
+            except Exception:
+                pass
+            conn.close()
+    except Exception:
+        # If this fails, ignore; app will still run but new columns won't be present until migrated
+        pass
+
+# Run quick runtime migration
+ensure_provenance_columns()
 
 # --- User Loader ---
 @login_manager.user_loader
@@ -277,6 +374,55 @@ def get_property_details(property_id):
     }
     return jsonify(prop_data)
 # -------------------------------------------
+
+
+# --- Verification endpoints ---
+@app.route('/api/property/<int:property_id>/verifications', methods=['GET'])
+def list_verifications(property_id):
+    prop = Property.query.get_or_404(property_id)
+    verifs = [v.to_dict() for v in prop.verifications]
+    return jsonify({'property_id': property_id, 'verifications': verifs, 'provenance_score': prop.provenance_score})
+
+
+@app.route('/api/property/<int:property_id>/verify', methods=['POST'])
+def create_verification(property_id):
+    prop = Property.query.get_or_404(property_id)
+    data = request.get_json() or {}
+    role = data.get('role') or data.get('role', 'artisan')
+    contributor = data.get('contributor_name')
+    doc_url = data.get('doc_url')
+    doc_hash = data.get('doc_hash') or (compute_sha256(doc_url) if doc_url else compute_sha256(str(datetime.datetime.utcnow())))
+    attestation = data.get('attestation_level', 'self')
+    score = float(data.get('score', 0.5))
+
+    v = Verification(
+        property_id=prop.id,
+        role=role,
+        contributor_name=contributor,
+        doc_url=doc_url,
+        doc_hash=doc_hash,
+        attestation_level=attestation,
+        score=score,
+        verifier=data.get('verifier'),
+        verification_tx=data.get('verification_tx'),
+        notes=data.get('notes')
+    )
+    db.session.add(v)
+    db.session.commit()
+
+    # recompute property provenance
+    recompute_provenance(prop)
+
+    return jsonify({'status': 'ok', 'verification': v.to_dict(), 'provenance_score': prop.provenance_score})
+
+
+@app.route('/api/anchor', methods=['POST'])
+def anchor_verifications():
+    # Anchor all verification doc_hashes into a simple ledger (Merkle root)
+    all_hashes = [v.doc_hash for v in Verification.query.all()]
+    root = make_merkle_root(all_hashes)
+    anchor = anchor_to_ledger(root)
+    return jsonify({'status': 'anchored', 'anchor': anchor})
 
 # --- Run the Application ---
 if __name__ == '__main__':
