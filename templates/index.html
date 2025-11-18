@@ -178,8 +178,12 @@
         <h2>Why Should you Choose RealHome?</h2>
         <div class="service-grid">
             <div class="service-card"><h3>Verified Data</h3><p>Using the classic Boston Housing dataset.</p></div>
-            <div class="service-card"><h3>Statistical Insights</h3><p>Analyze properties based on real data.</p></div>
-            <div class="service-card"><h3>ML Ready</h3><p>A perfect foundation for a data science project.</p></div>
+            <div class="service-card"><h3>People Who Purchased</h3><p><strong>{{ unique_buyers }}</strong> unique buyers on RealHome</p></div>
+            <div class="service-card"><h3>People Who Rented</h3><p><strong>{{ unique_renters }}</strong> unique renters on RealHome</p></div>
+            <div class="service-card"><h3>Total Visits</h3><p><strong>{{ total_visits }}</strong> total page visits</p></div>
+            <div class="service-card"><h3>Unique Visitors</h3><p><strong>{{ unique_visitors }}</strong> people visited</p></div>
+            <div class="service-card"><h3>Properties Sold</h3><p><strong>{{ properties_sold }}</strong> properties sold</p></div>
+            <div class="service-card"><h3>Properties Rented</h3><p><strong>{{ properties_rented }}</strong> distinct properties rented</p></div>
         </div>
     </div>
 </section>
@@ -195,7 +199,7 @@
                 onclick='showDetails(
                     "{{ prop.id }}", 
                     {{ prop.property_type | tojson }}, 
-                    "${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}", 
+                    {{ ((prop.medv or 0) * 1000 * USD_TO_INR) | inr | tojson }}, 
                     "{{ "{:.1f}".format(prop.rm) }} Rooms (RM) | {{ "{:.1f}".format(prop.ptratio) }} P/T Ratio | {{ "{:.2f}".format(prop.crim) }} Crime Rate", 
                     {{ (prop.street_name + ", Boston, MA") | tojson }}, 
                     {{ prop.image_url | tojson }},
@@ -206,7 +210,7 @@
                 <img src="{{ prop.image_url }}" alt="{{ prop.property_type }}"
                      onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Property+Image';">
                 <div class="listing-card-content">
-                    <div class="price">${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}</div>
+                    <div class="price">{{ ((prop.medv or 0) * 1000 * USD_TO_INR) | inr }}</div>
                     <h3>{{ prop.street_name }}</h3>
                     <div class="details">{{ "{:.1f}".format(prop.rm) }} Rooms | {{ "{:.2f}".format(prop.crim) }} Crime Rate</div>
                     <div class="address">{{ prop.property_type }} in Boston, MA</div>
@@ -242,6 +246,12 @@
         <div class="detail-buttons">
             <a id="detail-contact-btn" href="#" class="cta-button">Contact Agent</a>
             <a id="detail-map-btn" href="#" class="cta-button map-button" target="_blank">View on Map</a>
+            {% if current_user.is_authenticated %}
+                <button id="detail-purchase-btn" class="cta-button" onclick="createTransaction(window.currentPropertyId, 'buy')">Purchase</button>
+                <button id="detail-rent-btn" class="cta-button" onclick="createTransaction(window.currentPropertyId, 'rent')">Rent</button>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="cta-button">Login to Purchase / Rent</a>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -253,6 +263,7 @@
 
 <script>
 function showDetails(propertyId, title, price, details, address, image, lat, lon, description) {
+    window.currentPropertyId = propertyId;
     const detailsView = document.getElementById('property-details-view');
     const parts = details.split('|').map(p => p.trim());
     
@@ -289,6 +300,36 @@ document.getElementById('menu-toggle').addEventListener('click', function() {
         mobileMenu.style.display = 'flex';
     }
 });
+
+// Create transaction via API
+async function createTransaction(propertyId, type) {
+    try {
+        const resp = await fetch('/transaction/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ property_id: propertyId, type: type })
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+            alert('Transaction failed: ' + (data.message || 'Unknown error'));
+            return;
+        }
+        alert('Transaction recorded successfully.');
+        // Optionally update UI (mark sold)
+        if (data.property && data.property.is_sold) {
+            // simple visual cue
+            document.querySelectorAll('.listing-card').forEach(card => {
+                if (card.getAttribute('onclick') && card.getAttribute('onclick').includes(`'${propertyId}'`)) {
+                    card.querySelector('.price').textContent = card.querySelector('.price').textContent + ' (Sold)';
+                }
+            });
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Transaction error: ' + e.message);
+    }
+}
 </script>
+{% include 'chatbot_widget.html' %}
 </body>
 </html>

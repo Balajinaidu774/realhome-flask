@@ -11,6 +11,7 @@ import hashlib
 import datetime
 import json
 from utils.proof import compute_sha256, make_merkle_root, anchor_to_ledger
+from utils.chatbot import get_chatbot_response
 
 # --- Model Training ---
 model = LinearRegression()
@@ -39,6 +40,10 @@ except Exception as e:
 # --- End Model Training ---
 
 app = Flask(__name__)
+
+# Currency conversion (USD -> INR) and formatting
+app.config['USD_TO_INR'] = float(os.environ.get('USD_TO_INR', '83'))  # default conversion rate
+
 
 # --- Configurations ---
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a_very_secret_key_that_you_should_change') 
@@ -94,7 +99,12 @@ class Property(db.Model):
     provenance_score = db.Column(db.Float, nullable=True, default=0.0)
     provenance_summary = db.Column(db.Text, nullable=True)
     # -------------------------------------
-    
+
+    # Ownership fields
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    is_sold = db.Column(db.Boolean, default=False)
+    bought_on = db.Column(db.String(50), nullable=True)
+
     def __repr__(self):
         return f"Property('{self.street_name}', Verified: {self.quality_verified})"
 
@@ -133,6 +143,71 @@ class Verification(db.Model):
             'created_on': self.created_on.isoformat()
         }
 
+
+# --- Transaction model to track purchases and rentals ---
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    property_id = db.Column(db.Integer, db.ForeignKey('property.id'), nullable=False)
+    type = db.Column(db.String(20), nullable=False)  # 'buy' or 'rent'
+    created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('transactions', lazy=True))
+    property = db.relationship('Property', backref=db.backref('transactions', lazy=True))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'property_id': self.property_id,
+            'type': self.type,
+            'created_on': self.created_on.isoformat()
+        }
+
+
+# --- Support Ticket Model ---
+class SupportTicket(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    subject = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(20), default='open')  # open, in_progress, resolved, closed
+    created_on = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated_on = db.Column(db.DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('support_tickets', lazy=True))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'subject': self.subject,
+            'message': self.message,
+            'status': self.status,
+            'created_on': self.created_on.isoformat(),
+            'updated_on': self.updated_on.isoformat()
+        }
+
+
+# --- Visitor tracking model ---
+class Visitor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(100), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    user_agent = db.Column(db.String(500), nullable=True)
+    visits = db.Column(db.Integer, default=1)
+    first_seen = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    last_seen = db.Column(db.DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('visitors', lazy=True))
+
+    def touch(self):
+        self.visits = (self.visits or 0) + 1
+        self.last_seen = datetime.datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
+
+
 # --- Simple provenance scoring helpers ---
 ATTESTATION_WEIGHT = {
     'self': 0.3,
@@ -166,6 +241,32 @@ def recompute_provenance(property_obj):
     db.session.commit()
 
 
+# --- Visitor tracking helper ---
+def record_visit(req):
+    try:
+        ip = req.remote_addr or req.headers.get('X-Forwarded-For', '').split(',')[0].strip()
+    except Exception:
+        ip = None
+    ua = req.headers.get('User-Agent', '')[:480]
+    visitor = None
+    try:
+        # Try to find by ip + user_agent
+        if ip:
+            visitor = Visitor.query.filter_by(ip=ip, user_agent=ua).first()
+        if not visitor and current_user.is_authenticated:
+            # try to find by user association
+            visitor = Visitor.query.filter_by(user_id=current_user.id).first()
+        if visitor:
+            visitor.touch()
+        else:
+            new_v = Visitor(ip=ip, user_id=(current_user.id if current_user.is_authenticated else None), user_agent=ua, visits=1)
+            db.session.add(new_v)
+            db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return
+
+
 # --- Ensure DB has provenance columns (simple runtime migration for SQLite) ---
 def ensure_provenance_columns():
     try:
@@ -181,6 +282,19 @@ def ensure_provenance_columns():
                 conn.execute(text('ALTER TABLE property ADD COLUMN provenance_summary TEXT'))
             except Exception:
                 pass
+            # add ownership columns if missing
+            try:
+                conn.execute(text('ALTER TABLE property ADD COLUMN owner_id INTEGER'))
+            except Exception:
+                pass
+            try:
+                conn.execute(text('ALTER TABLE property ADD COLUMN is_sold BOOLEAN DEFAULT 0'))
+            except Exception:
+                pass
+            try:
+                conn.execute(text("ALTER TABLE property ADD COLUMN bought_on TEXT"))
+            except Exception:
+                pass
             conn.close()
     except Exception:
         # If this fails, ignore; app will still run but new columns won't be present until migrated
@@ -188,6 +302,46 @@ def ensure_provenance_columns():
 
 # Run quick runtime migration
 ensure_provenance_columns()
+
+# Ensure all tables exist (safe for development)
+with app.app_context():
+    try:
+        db.create_all()
+    except Exception:
+        pass
+
+# --- Template filters / helpers for currency formatting ---
+def _format_indian_number(amount: int) -> str:
+    """Format integer amount using Indian grouping: 12,34,567"""
+    s = str(int(round(amount)))
+    if len(s) <= 3:
+        return s
+    last3 = s[-3:]
+    rest = s[:-3]
+    parts = []
+    while len(rest) > 2:
+        parts.insert(0, rest[-2:])
+        rest = rest[:-2]
+    if rest:
+        parts.insert(0, rest)
+    return ','.join(parts) + ',' + last3
+
+def format_inr(amount, per_month=False):
+    """Return a formatted string with the rupee symbol and Indian grouping.
+    `amount` is expected in INR (numeric).
+    """
+    try:
+        amt = float(amount)
+    except Exception:
+        return amount
+    formatted = _format_indian_number(amt)
+    if per_month:
+        return f"₹{formatted} / month"
+    return f"₹{formatted}"
+
+# Register filter and make rate available in templates
+app.jinja_env.filters['inr'] = format_inr
+app.jinja_env.globals['USD_TO_INR'] = app.config['USD_TO_INR']
 
 # --- User Loader ---
 @login_manager.user_loader
@@ -246,8 +400,26 @@ def logout():
 # --- Main Page Routes ---
 @app.route('/')
 def index():
+    # record the visit
+    try:
+        record_visit(request)
+    except Exception:
+        pass
+
     properties = Property.query.order_by(db.func.random()).limit(3).all()
-    return render_template('index.html', properties=properties)
+    # compute unique buyers and unique renters
+    try:
+        unique_buyers = db.session.query(func.count(func.distinct(Transaction.user_id))).filter(Transaction.type == 'buy').scalar() or 0
+        unique_renters = db.session.query(func.count(func.distinct(Transaction.user_id))).filter(Transaction.type == 'rent').scalar() or 0
+        # visitor stats
+        unique_visitors = Visitor.query.count()
+        total_visits = db.session.query(func.sum(Visitor.visits)).scalar() or 0
+        # properties sold and rented
+        properties_sold = Property.query.filter_by(is_sold=True).count()
+        properties_rented = db.session.query(func.count(func.distinct(Transaction.property_id))).filter(Transaction.type == 'rent').scalar() or 0
+    except Exception:
+        unique_buyers = unique_renters = unique_visitors = total_visits = properties_sold = properties_rented = 0
+    return render_template('index.html', properties=properties, unique_buyers=unique_buyers, unique_renters=unique_renters, unique_visitors=unique_visitors, total_visits=total_visits, properties_sold=properties_sold, properties_rented=properties_rented)
 
 @app.route('/buy')
 def buy():
@@ -261,11 +433,18 @@ def buy():
         query = query.filter(Property.property_type == search_type)
     if search_price_sale:
         if search_price_sale == '1':
-            query = query.filter(Property.medv < 500)
+            query = query.filter(Property.medv < 17)
         elif search_price_sale == '2':
-            query = query.filter(Property.medv.between(500, 1000))
+            query = query.filter(Property.medv.between(17, 22))
         elif search_price_sale == '3':
-            query = query.filter(Property.medv > 1000)
+            query = query.filter(Property.medv.between(22, 26))
+        elif search_price_sale == '4':
+            query = query.filter(Property.medv > 26)
+    # record visit and compute stats
+    try:
+        record_visit(request)
+    except Exception:
+        pass
     properties = query.all()
     types_result = db.session.query(Property.property_type).distinct().all()
     property_types = [t[0] for t in types_result if t[0]]
@@ -286,11 +465,17 @@ def rent():
         query = query.filter(Property.property_type == search_type)
     if search_price_rent:
         if search_price_rent == '1':
-            query = query.filter(Property.medv < 300)
+            query = query.filter(Property.medv < 1.5)
         elif search_price_rent == '2':
-            query = query.filter(Property.medv.between(300, 600))
+            query = query.filter(Property.medv.between(1.5, 2.2))
         elif search_price_rent == '3':
-            query = query.filter(Property.medv > 600)
+            query = query.filter(Property.medv.between(2.2, 2.6))
+        elif search_price_rent == '4':
+            query = query.filter(Property.medv > 2.6)
+    try:
+        record_visit(request)
+    except Exception:
+        pass
     properties = query.all()
     types_result = db.session.query(Property.property_type).distinct().all()
     property_types = [t[0] for t in types_result if t[0]]
@@ -303,15 +488,44 @@ def rent():
 def about():
     return render_template('about.html')
 
-@app.route('/support')
+@app.route('/support', methods=['GET', 'POST'])
 @login_required
 def support():
+    if request.method == 'POST':
+        subject = request.form.get('subject', '').strip()
+        message = request.form.get('message', '').strip()
+        
+        if not subject or not message:
+            flash('Subject and message are required.', 'danger')
+            return render_template('support.html')
+        
+        # Create new support ticket
+        ticket = SupportTicket(user_id=current_user.id, subject=subject, message=message)
+        db.session.add(ticket)
+        db.session.commit()
+        
+        flash('Your support ticket has been submitted successfully. We will review it shortly.', 'success')
+        return render_template('support.html')
+    
     return render_template('support.html')
 
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html')
+    # Count number of properties the current user has purchased and list them
+    try:
+        purchased_count = Transaction.query.filter_by(user_id=current_user.id, type='buy').count()
+        rented_count = Transaction.query.filter_by(user_id=current_user.id, type='rent').count()
+        purchased_tx = Transaction.query.filter_by(user_id=current_user.id, type='buy').order_by(Transaction.created_on.desc()).all()
+        purchased_props = [Property.query.get(tx.property_id) for tx in purchased_tx]
+        # Get user's support tickets
+        support_tickets = SupportTicket.query.filter_by(user_id=current_user.id).order_by(SupportTicket.created_on.desc()).all()
+    except Exception:
+        purchased_count = 0
+        rented_count = 0
+        purchased_props = []
+        support_tickets = []
+    return render_template('profile.html', purchased_count=purchased_count, rented_count=rented_count, purchased_props=purchased_props, support_tickets=support_tickets)
 
 @app.route('/contact/<int:property_id>', methods=['GET', 'POST'])
 @login_required
@@ -339,10 +553,12 @@ def predict():
         input_data = pd.DataFrame([[rm, lstat, ptratio, crim]], columns=feature_cols)
         prediction_raw = model.predict(input_data)
         predicted_price = prediction_raw[0] * 1000
+        # convert USD -> INR for display
+        predicted_inr = predicted_price * app.config['USD_TO_INR']
         return render_template('value.html', 
-                               averages=data_averages, 
-                               prediction=f"${predicted_price:,.0f}",
-                               form_values=form_data)
+                       averages=data_averages, 
+                       prediction=format_inr(predicted_inr),
+                       form_values=form_data)
     except Exception as e:
         print(f"Prediction Error: {e}")
         flash('There was an error making a prediction. Please check your inputs.', 'danger')
@@ -357,8 +573,9 @@ def get_property_details(property_id):
     prop_data = {
         "id": prop.id,
         "property_type": prop.property_type,
-        "price_sale": f"${(prop.medv or 0) * 1000:,.0f}",
-        "price_rent": f"${(prop.medv or 0) * 10:,.0f} / month",
+        # Provide prices converted to INR
+        "price_sale": format_inr((prop.medv or 0) * 1000 * app.config['USD_TO_INR']),
+        "price_rent": format_inr((prop.medv or 0) * 10 * app.config['USD_TO_INR'], per_month=True),
         "details_line": f"{prop.rm:.1f} Rooms | {prop.ptratio:.1f} P/T Ratio | {prop.crim:.2f} Crime Rate",
         "address": f"{prop.street_name}, Boston, MA",
         "image_url": prop.image_url,
@@ -382,6 +599,36 @@ def list_verifications(property_id):
     prop = Property.query.get_or_404(property_id)
     verifs = [v.to_dict() for v in prop.verifications]
     return jsonify({'property_id': property_id, 'verifications': verifs, 'provenance_score': prop.provenance_score})
+
+
+@app.route('/transaction/create', methods=['POST'])
+@login_required
+def create_transaction():
+    data = request.get_json() or {}
+    prop_id = data.get('property_id')
+    tx_type = data.get('type')
+    if not prop_id or tx_type not in ('buy', 'rent'):
+        return jsonify({'status': 'error', 'message': 'property_id and valid type (buy|rent) required'}), 400
+    prop = Property.query.get(prop_id)
+    if not prop:
+        return jsonify({'status': 'error', 'message': 'property not found'}), 404
+    # create transaction
+    tx = Transaction(user_id=current_user.id, property_id=prop.id, type=tx_type)
+    db.session.add(tx)
+
+    # If this is a purchase, mark property as sold and set owner
+    if tx_type == 'buy':
+        try:
+            prop.owner_id = current_user.id
+            prop.is_sold = True
+            prop.bought_on = datetime.datetime.utcnow().isoformat()
+            db.session.add(prop)
+        except Exception:
+            # ignore property update errors but keep transaction
+            pass
+
+    db.session.commit()
+    return jsonify({'status': 'ok', 'transaction': tx.to_dict(), 'property': {'id': prop.id, 'is_sold': bool(prop.is_sold), 'owner_id': prop.owner_id}})
 
 
 @app.route('/api/property/<int:property_id>/verify', methods=['POST'])
@@ -423,6 +670,15 @@ def anchor_verifications():
     root = make_merkle_root(all_hashes)
     anchor = anchor_to_ledger(root)
     return jsonify({'status': 'anchored', 'anchor': anchor})
+
+
+# --- Chatbot endpoint ---
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    data = request.get_json() or {}
+    user_message = data.get('message', '').strip()
+    response = get_chatbot_response(user_message)
+    return jsonify(response)
 
 # --- Run the Application ---
 if __name__ == '__main__':
