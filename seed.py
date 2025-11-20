@@ -161,8 +161,6 @@ def seed_database():
                             
                             # --- UPDATED: Use the new unique URL ---
                             image_url=unique_image_url,
-                            # -------------------------------------
-                            
                             lat=fake_lat,
                             lon=fake_lon,
                             property_type=fake_type,

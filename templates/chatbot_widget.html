@@ -1,0 +1,315 @@
+<!-- Floating Chatbot Widget (Bottom-Right Corner) -->
+<style>
+    #floating-chatbot {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .chatbot-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: var(--color-primary, #1a73e8);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    .chatbot-btn:hover {
+        background-color: var(--color-primary-hover, #155ab6);
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .chatbot-window {
+        display: none;
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 350px;
+        height: 500px;
+        background-color: var(--color-surface, #ffffff);
+        border: 1px solid var(--color-border, #ddd);
+        border-radius: 12px;
+        box-shadow: 0 5px 40px rgba(0, 0, 0, 0.16);
+        flex-direction: column;
+        z-index: 9999;
+    }
+
+    .chatbot-window.open {
+        display: flex;
+    }
+
+    .chatbot-header {
+        background-color: var(--color-primary, #1a73e8);
+        color: white;
+        padding: 15px;
+        border-radius: 12px 12px 0 0;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chatbot-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chatbot-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background-color: var(--color-bg, #f8f9fb);
+    }
+
+    .chatbot-message {
+        padding: 10px 12px;
+        border-radius: 8px;
+        max-width: 85%;
+        word-wrap: break-word;
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+
+    .chatbot-message.user {
+        background-color: var(--color-primary, #1a73e8);
+        color: white;
+        align-self: flex-end;
+    }
+
+    .chatbot-message.bot {
+        background-color: var(--color-feature-bg, #e8f0fe);
+        color: var(--color-text, #333);
+        align-self: flex-start;
+    }
+
+    .chatbot-message.info {
+        background-color: var(--color-feature-bg, #e8f0fe);
+        color: var(--color-text, #333);
+        align-self: center;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .chatbot-input-area {
+        display: flex;
+        gap: 8px;
+        padding: 12px;
+        border-top: 1px solid var(--color-border, #ddd);
+        background-color: var(--color-surface, #ffffff);
+        border-radius: 0 0 12px 12px;
+    }
+
+    .chatbot-input-area input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid var(--color-border, #ddd);
+        border-radius: 6px;
+        font-size: 0.9em;
+        background-color: var(--color-bg, #f8f9fb);
+        color: var(--color-text, #333);
+    }
+
+    .chatbot-input-area input:disabled {
+        background-color: var(--color-border, #ddd);
+        cursor: not-allowed;
+    }
+
+    .chatbot-input-area button {
+        background-color: var(--color-primary, #1a73e8);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    .chatbot-input-area button:hover:not(:disabled) {
+        background-color: var(--color-primary-hover, #155ab6);
+    }
+
+    .chatbot-input-area button:disabled {
+        background-color: var(--color-border, #ddd);
+        cursor: not-allowed;
+    }
+
+    .login-prompt {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 20px;
+        background-color: var(--color-bg, #f8f9fb);
+        text-align: center;
+    }
+
+    .login-prompt p {
+        margin: 0;
+        color: var(--color-text, #333);
+        font-size: 0.95em;
+    }
+
+    .login-prompt a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: var(--color-primary, #1a73e8);
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    .login-prompt a:hover {
+        background-color: var(--color-primary-hover, #155ab6);
+    }
+
+    @media (max-width: 480px) {
+        .chatbot-window {
+            width: 90vw;
+            height: 60vh;
+            bottom: 70px;
+            right: 5%;
+            left: auto;
+        }
+
+        .chatbot-message {
+            max-width: 90%;
+        }
+    }
+</style>
+
+<div id="floating-chatbot">
+    <button class="chatbot-btn" id="chatbot-toggle">💬</button>
+    
+    <div class="chatbot-window" id="chatbot-window">
+        <div class="chatbot-header">
+            <span>RealHome Assistant</span>
+            <button class="chatbot-close" id="chatbot-close">✕</button>
+        </div>
+
+        <!-- Content for authenticated users -->
+        <div id="chatbot-authenticated" style="display: flex; flex-direction: column; flex: 1;">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chatbot-message bot">
+                    Hello! 👋 I'm your AI assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chatbot-input-area">
+                <input type="text" id="chatbot-input" placeholder="Ask me anything...">
+                <button id="chatbot-send">Send</button>
+            </div>
+        </div>
+
+        <!-- Content for unauthenticated users -->
+        <div id="chatbot-unauthenticated" style="display: none; flex-direction: column; flex: 1;">
+            <div class="login-prompt">
+                <p>👋 Welcome to RealHome!</p>
+                <p>Please log in to use the AI Assistant and get personalized help with your property search.</p>
+                <a href="{{ url_for('login') }}">Login</a>
+                <p style="font-size: 0.85em; color: var(--color-text-secondary, #555);">Don't have an account? <a href="{{ url_for('signup') }}" style="color: var(--color-primary, #1a73e8);">Sign up here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
+    const toggleBtn = document.getElementById('chatbot-toggle');
+    const closeBtn = document.getElementById('chatbot-close');
+    const chatWindow = document.getElementById('chatbot-window');
+    const messagesDiv = document.getElementById('chatbot-messages');
+    const inputField = document.getElementById('chatbot-input');
+    const sendBtn = document.getElementById('chatbot-send');
+    const authDiv = document.getElementById('chatbot-authenticated');
+    const unauthDiv = document.getElementById('chatbot-unauthenticated');
+
+    // Show appropriate content based on auth status
+    if (isAuthenticated) {
+        authDiv.style.display = 'flex';
+        unauthDiv.style.display = 'none';
+    } else {
+        authDiv.style.display = 'none';
+        unauthDiv.style.display = 'flex';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        chatWindow.classList.toggle('open');
+        if (chatWindow.classList.contains('open') && isAuthenticated) {
+            inputField.focus();
+        }
+    });
+
+    closeBtn.addEventListener('click', () => {
+        chatWindow.classList.remove('open');
+    });
+
+    function addMessage(text, sender) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `chatbot-message ${sender}`;
+        msgDiv.textContent = text;
+        messagesDiv.appendChild(msgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function sendMessage() {
+        if (!isAuthenticated) return;
+
+        const message = inputField.value.trim();
+        if (!message) return;
+
+        addMessage(message, 'user');
+        inputField.value = '';
+        sendBtn.disabled = true;
+
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            addMessage(data.message, 'bot');
+            sendBtn.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+            sendBtn.disabled = false;
+        });
+    }
+
+    if (isAuthenticated) {
+        sendBtn.addEventListener('click', sendMessage);
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    }
+</script>
+

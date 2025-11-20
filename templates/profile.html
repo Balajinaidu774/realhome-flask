@@ -151,10 +151,88 @@
             <p>{{ current_user.email }}</p>
         </div>
 
+        <div class="profile-info">
+            <label>Properties Purchased</label>
+            <p>{{ purchased_count or 0 }}</p>
+        </div>
+
+        <div class="profile-info">
+            <label>Properties Rented</label>
+            <p>{{ rented_count or 0 }}</p>
+        </div>
+
         <div class="profile-actions">
             <p style="color: var(--color-text-secondary); font-size: 0.9em;">Need to change your details?</p>
             <a href="{{ url_for('support') }}" class="cta-button">Contact Support</a>
         </div>
+
+        {% if purchased_props and purchased_props|length > 0 %}
+        <section style="margin-top:30px;">
+            <h2 style="color:var(--color-heading);">Properties You Purchased</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-top:12px;">
+                {% for p in purchased_props %}
+                <div style="background:var(--color-surface); padding:12px; border-radius:8px; box-shadow:0 4px 10px var(--color-shadow);">
+                    <img src="{{ p.image_url }}" alt="{{ p.street_name }}" style="width:100%; height:140px; object-fit:cover; border-radius:6px;">
+                    <h3 style="margin:8px 0 4px; font-size:1.05em;">{{ p.street_name }}</h3>
+                    <div style="color:var(--color-text-secondary);">{{ p.property_type }} • {{ ((p.medv or 0) * 1000 * USD_TO_INR) | inr }}</div>
+                    <div style="margin-top:8px;"><a href="{{ url_for('contact', property_id=p.id) }}" class="cta-button">View / Contact</a></div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if support_tickets and support_tickets|length > 0 %}
+        <section style="margin-top:40px; border-top: 2px solid var(--color-border); padding-top:30px;">
+            <h2 style="color:var(--color-heading); margin-bottom:20px;">Support Tickets</h2>
+            <div style="overflow-x: auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:0.95em;">
+                    <thead>
+                        <tr style="background-color:var(--color-bg); border-bottom:2px solid var(--color-border);">
+                            <th style="padding:12px 8px; text-align:left; font-weight:600; color:var(--color-heading);">Subject</th>
+                            <th style="padding:12px 8px; text-align:center; font-weight:600; color:var(--color-heading);">Status</th>
+                            <th style="padding:12px 8px; text-align:left; font-weight:600; color:var(--color-heading);">Created</th>
+                            <th style="padding:12px 8px; text-align:left; font-weight:600; color:var(--color-heading);">Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in support_tickets %}
+                        <tr style="border-bottom:1px solid var(--color-border);">
+                            <td style="padding:12px 8px;">
+                                <strong>{{ ticket.subject }}</strong>
+                                <div style="color:var(--color-text-secondary); font-size:0.9em; margin-top:4px;">{{ ticket.message[:60] }}{% if ticket.message|length > 60 %}...{% endif %}</div>
+                            </td>
+                            <td style="padding:12px 8px; text-align:center;">
+                                <span style="
+                                    display:inline-block;
+                                    padding:6px 12px;
+                                    border-radius:4px;
+                                    font-weight:600;
+                                    font-size:0.85em;
+                                    background-color:{% if ticket.status == 'open' %}#fff3cd{% elif ticket.status == 'in_progress' %}#cce5ff{% elif ticket.status == 'resolved' %}#d4edda{% else %}#e2e3e5{% endif %};
+                                    color:{% if ticket.status == 'open' %}#856404{% elif ticket.status == 'in_progress' %}#004085{% elif ticket.status == 'resolved' %}#155724{% else %}#383d41{% endif %};
+                                ">
+                                    {{ ticket.status | replace('_', ' ') | title }}
+                                </span>
+                            </td>
+                            <td style="padding:12px 8px; color:var(--color-text-secondary); font-size:0.9em;">
+                                {{ ticket.created_on.strftime('%b %d, %Y') }}
+                            </td>
+                            <td style="padding:12px 8px; color:var(--color-text-secondary); font-size:0.9em;">
+                                {{ ticket.updated_on.strftime('%b %d, %Y') if ticket.updated_on else 'N/A' }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% else %}
+        <section style="margin-top:40px; border-top: 2px solid var(--color-border); padding-top:30px; text-align:center;">
+            <h2 style="color:var(--color-heading); margin-bottom:20px;">Support Tickets</h2>
+            <p style="color:var(--color-text-secondary); font-size:0.95em;">No support tickets yet. <a href="{{ url_for('support') }}" style="color:var(--color-primary); text-decoration:none; font-weight:600;">Submit one</a> if you need assistance.</p>
+        </section>
+        {% endif %}
     </section>
 </main>
 
@@ -174,5 +252,6 @@ document.getElementById('menu-toggle').addEventListener('click', function() {
     }
 });
 </script>
+{% include 'chatbot_widget.html' %}
 </body>
 </html>

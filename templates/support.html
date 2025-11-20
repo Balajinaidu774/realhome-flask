@@ -140,16 +140,41 @@
 </div>
 
 <main>
-    <section class="support-section">
-        <div id="message-box"></div>
-        <h2>Customer Support</h2>
-        <form id="support-form">
-            <input type="text" id="name" placeholder="Your Name" value="{{ current_user.username }}" required>
-            <input type="email" id="email" placeholder="Your Email" value="{{ current_user.email }}" required>
-            <textarea id="message" placeholder="Describe your issue..." required></textarea>
-            <button type="submit">Submit Request</button>
-        </form>
-    </section>
+    <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 50px auto; max-width: 1400px;">
+        <!-- Support Form -->
+        <section class="support-section" style="max-width: 100%; margin: 0;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="background-color: {% if category == 'success' %}var(--color-flash-success-bg){% else %}#f8d7da{% endif %}; color: {% if category == 'success' %}var(--color-flash-success-text){% else %}#721c24{% endif %}; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <div id="message-box"></div>
+            <h2>Submit a Request</h2>
+            <form method="POST" action="{{ url_for('support') }}">
+                <input type="text" name="subject" placeholder="Subject" required>
+                <textarea name="message" placeholder="Describe your issue..." required></textarea>
+                <button type="submit">Submit Request</button>
+            </form>
+        </section>
+
+        <!-- Chatbot Section -->
+        <section class="support-section" style="max-width: 100%; margin: 0; display: flex; flex-direction: column;">
+            <h2>AI Assistant 🤖</h2>
+            <div id="chatbox" style="flex: 1; display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--color-border); border-radius: 8px; padding: 15px; background-color: var(--color-bg); min-height: 300px; max-height: 400px; overflow-y: auto;">
+                <div style="padding: 10px; background-color: var(--color-primary); color: white; border-radius: 5px; max-width: 80%; align-self: flex-start;">
+                    Hello! 👋 I'm your AI assistant. Ask me about properties, valuation, accounts, or anything else! Type your question below.
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <input type="text" id="chat-input" placeholder="Type your question..." style="flex: 1; margin: 0;">
+                <button id="send-btn" style="width: 50px; margin: 0; padding: 12px;">Send</button>
+            </div>
+        </section>
+    </div>
 </main>
 <footer>
     <p>&copy; 2025 RealHome. All rights reserved.</p>
@@ -170,6 +195,63 @@ document.getElementById("support-form").addEventListener("submit", function(e) {
     const name = document.getElementById("name").value;
     showMessage(`Thanks, ${name}! Your request has been submitted.`);
     document.getElementById("message").value = "";
+});
+
+// Chatbot functionality
+const chatbox = document.getElementById('chatbox');
+const chatInput = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+
+function addMessage(text, sender) {
+    const msgDiv = document.createElement('div');
+    msgDiv.style.padding = '10px';
+    msgDiv.style.borderRadius = '5px';
+    msgDiv.style.maxWidth = '80%';
+    msgDiv.style.wordWrap = 'break-word';
+    
+    if (sender === 'user') {
+        msgDiv.style.backgroundColor = 'var(--color-primary)';
+        msgDiv.style.color = 'white';
+        msgDiv.style.alignSelf = 'flex-end';
+    } else {
+        msgDiv.style.backgroundColor = 'var(--color-feature-bg)';
+        msgDiv.style.color = 'var(--color-text)';
+        msgDiv.style.alignSelf = 'flex-start';
+    }
+    
+    msgDiv.textContent = text;
+    chatbox.appendChild(msgDiv);
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+    
+    addMessage(message, 'user');
+    chatInput.value = '';
+    sendBtn.disabled = true;
+    
+    fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        addMessage(data.message, 'bot');
+        sendBtn.disabled = false;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+        sendBtn.disabled = false;
+    });
+}
+
+sendBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
 });
 
 document.getElementById('menu-toggle').addEventListener('click', function() {

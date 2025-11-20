@@ -176,7 +176,7 @@
             <div class="property-preview-info">
                 <h3>Inquiry about: {{ prop.street_name }}</h3>
                 <p><strong>Property ID:</strong> {{ prop.id }}</p>
-                <p><strong>Price:</strong> ${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}</p>
+                <p><strong>Price:</strong> {{ ((prop.medv or 0) * 1000 * USD_TO_INR) | inr }}</p>
             </div>
         </div>
 
@@ -215,5 +215,6 @@ document.getElementById('menu-toggle').addEventListener('click', function() {
     }
 });
 </script>
+{% include 'chatbot_widget.html' %}
 </body>
 </html>

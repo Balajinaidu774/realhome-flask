@@ -212,12 +212,13 @@
                 </select>
             </div>
             <div class="search-field">
-                <label for="search-price-sale">Price</label>
+                <label for="search-price-sale">Price Range</label>
                 <select id="search-price-sale" name="search_price_sale">
-                    <option value="">Any Price</option>
-                    <option value="1" {% if search_params.get('search_price_sale') == '1' %}selected{% endif %}>Under $500,000</option>
-                    <option value="2" {% if search_params.get('search_price_sale') == '2' %}selected{% endif %}>$500,000 - $1,000,000</option>
-                    <option value="3" {% if search_params.get('search_price_sale') == '3' %}selected{% endif %}>Over $1,000,000</option>
+                    <option value="">All Prices</option>
+                    <option value="1" {% if search_params.get('search_price_sale') == '1' %}selected{% endif %}>Under {{ (17 * 1000 * USD_TO_INR) | inr }}</option>
+                    <option value="2" {% if search_params.get('search_price_sale') == '2' %}selected{% endif %}>{{ (17 * 1000 * USD_TO_INR) | inr }} - {{ (22 * 1000 * USD_TO_INR) | inr }}</option>
+                    <option value="3" {% if search_params.get('search_price_sale') == '3' %}selected{% endif %}>{{ (22 * 1000 * USD_TO_INR) | inr }} - {{ (26 * 1000 * USD_TO_INR) | inr }}</option>
+                    <option value="4" {% if search_params.get('search_price_sale') == '4' %}selected{% endif %}>Over {{ (26 * 1000 * USD_TO_INR) | inr }}</option>
                 </select>
             </div>
             <button type="submit" class="search-button">Search</button>
@@ -234,7 +235,7 @@
                          onclick='showDetails(
                             "{{ prop.id }}",
                             {{ prop.property_type | tojson }}, 
-                            "${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}", 
+                            {{ ((prop.medv or 0) * 1000 * USD_TO_INR) | inr | tojson }}, 
                             "{{ "{:.1f}".format(prop.rm) }} Rooms | {{ "{:.1f}".format(prop.ptratio) }} P/T Ratio | {{ "{:.2f}".format(prop.crim) }} Crime Rate", 
                             {{ (prop.street_name + ", Boston, MA") | tojson }}, 
                             {{ prop.image_url | tojson }},
@@ -245,7 +246,7 @@
                     <img src="{{ prop.image_url }}" alt="{{ prop.property_type }}"
                          onerror="this.onerror=null; this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Property+Image';">
                     <div class="listing-card-content">
-                        <div class="price">${{ "{:,.0f}".format((prop.medv or 0) * 1000) }}</div>
+                        <div class="price">{{ ((prop.medv or 0) * 1000 * USD_TO_INR) | inr }}</div>
                         <h3>{{ prop.street_name }}</h3>
                         <div class="details">{{ "{:.1f}".format(prop.rm) }} Rooms | {{ "{:.2f}".format(prop.crim) }} Crime Rate</div>
                         <div style="margin-top:8px; font-size:0.9em; color:var(--color-text-secondary);">
@@ -296,6 +297,12 @@
             <div class="detail-buttons">
                 <a id="detail-contact-btn" href="#" class="cta-button">Contact Agent</a>
                 <a id="detail-map-btn" href="#" class="cta-button map-button" target="_blank">View on Map</a>
+                {% if current_user.is_authenticated %}
+                    <button id="detail-purchase-btn" class="cta-button" onclick="createTransaction(window.currentPropertyId, 'buy')">Purchase</button>
+                    <button id="detail-rent-btn" class="cta-button" onclick="createTransaction(window.currentPropertyId, 'rent')">Rent</button>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="cta-button">Login to Purchase / Rent</a>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -307,6 +314,7 @@
 
     <script>
     function showDetails(propertyId, title, price, details, address, image, lat, lon, description) {
+        window.currentPropertyId = propertyId;
         const detailsView = document.getElementById('property-details-view');
         const parts = details.split('|').map(p => p.trim());
         
@@ -343,6 +351,26 @@
             mobileMenu.style.display = 'flex';
         }
     });
+
+    // Create transaction via API
+    async function createTransaction(propertyId, type) {
+        try {
+            const resp = await fetch('/transaction/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ property_id: propertyId, type: type })
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                alert('Transaction failed: ' + (data.message || 'Unknown error'));
+                return;
+            }
+            alert('Transaction recorded successfully.');
+        } catch (e) {
+            console.error(e);
+            alert('Transaction error: ' + e.message);
+        }
+    }
 
    document.addEventListener('DOMContentLoaded', function() {
         const allCards = document.querySelectorAll('.listing-card');
@@ -392,5 +420,6 @@
         }
     });
     </script>
+{% include 'chatbot_widget.html' %}
 </body>
 </html>
