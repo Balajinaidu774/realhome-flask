@@ -186,10 +186,17 @@
         <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
     {% endif %}
 </div>
+    {% if properties and properties|length > 0 %}
+    <section class="hero" style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('{{ properties[0].image_url }}');">
+        <h1>Find Your Perfect Rental Home</h1>
+        <p>Discover homes that match your lifestyle and budget.</p>
+    </section>
+    {% else %}
     <section class="hero">
         <h1>Find Your Perfect Rental Home</h1>
         <p>Discover homes that match your lifestyle and budget.</p>
     </section>
+    {% endif %}
 
     <div class="search-bar-container container">
         <form class="search-form" method="GET" action="{{ url_for('rent') }}">

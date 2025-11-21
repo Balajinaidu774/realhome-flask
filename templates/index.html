@@ -169,10 +169,17 @@
         <a href="{{ url_for('signup') }}" class="signup-btn">Sign Up</a>
     {% endif %}
 </div>
+{% if properties and properties|length > 0 %}
+<section class="hero" style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('{{ properties[0].image_url }}');">
+    <h1>Find Your Dream Home in Boston</h1>
+    <p>The best properties, based on the Boston Housing dataset.</p>
+</section>
+{% else %}
 <section class="hero">
     <h1>Find Your Dream Home in Boston</h1>
     <p>The best properties, based on the Boston Housing dataset.</p>
 </section>
+{% endif %}
 <section class="services">
     <div class="container">
         <h2>Why Should you Choose RealHome?</h2>
