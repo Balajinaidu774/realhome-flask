@@ -215,10 +215,10 @@
                 <label for="search-price-sale">Price Range</label>
                 <select id="search-price-sale" name="search_price_sale">
                     <option value="">All Prices</option>
-                    <option value="1" {% if search_params.get('search_price_sale') == '1' %}selected{% endif %}>Under {{ (17 * 1000 * USD_TO_INR) | inr }}</option>
-                    <option value="2" {% if search_params.get('search_price_sale') == '2' %}selected{% endif %}>{{ (17 * 1000 * USD_TO_INR) | inr }} - {{ (22 * 1000 * USD_TO_INR) | inr }}</option>
-                    <option value="3" {% if search_params.get('search_price_sale') == '3' %}selected{% endif %}>{{ (22 * 1000 * USD_TO_INR) | inr }} - {{ (26 * 1000 * USD_TO_INR) | inr }}</option>
-                    <option value="4" {% if search_params.get('search_price_sale') == '4' %}selected{% endif %}>Over {{ (26 * 1000 * USD_TO_INR) | inr }}</option>
+                    <option value="1" {% if search_params.get('search_price_sale') == '1' %}selected{% endif %}>Under {{ (150000 * USD_TO_INR) | inr }}</option>
+                    <option value="2" {% if search_params.get('search_price_sale') == '2' %}selected{% endif %}>{{ (150000 * USD_TO_INR) | inr }} - {{ (300000 * USD_TO_INR) | inr }}</option>
+                    <option value="3" {% if search_params.get('search_price_sale') == '3' %}selected{% endif %}>{{ (300000 * USD_TO_INR) | inr }} - {{ (500000 * USD_TO_INR) | inr }}</option>
+                    <option value="4" {% if search_params.get('search_price_sale') == '4' %}selected{% endif %}>Over {{ (500000 * USD_TO_INR) | inr }}</option>
                 </select>
             </div>
             <button type="submit" class="search-button">Search</button>

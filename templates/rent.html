@@ -222,10 +222,10 @@
                 <label for="search-price-rent">Monthly Rent Range</label>
                 <select id="search-price-rent" name="search_price_rent">
                     <option value="">All Rent Prices</option>
-                    <option value="1" {% if search_params.get('search_price_rent') == '1' %}selected{% endif %}>Under {{ (1.5 * 1000 * USD_TO_INR) | inr }} / month</option>
-                    <option value="2" {% if search_params.get('search_price_rent') == '2' %}selected{% endif %}>{{ (1.5 * 1000 * USD_TO_INR) | inr }} - {{ (2.2 * 1000 * USD_TO_INR) | inr }} / month</option>
-                    <option value="3" {% if search_params.get('search_price_rent') == '3' %}selected{% endif %}>{{ (2.2 * 1000 * USD_TO_INR) | inr }} - {{ (2.6 * 1000 * USD_TO_INR) | inr }} / month</option>
-                    <option value="4" {% if search_params.get('search_price_rent') == '4' %}selected{% endif %}>Over {{ (2.6 * 1000 * USD_TO_INR) | inr }} / month</option>
+                    <option value="1" {% if search_params.get('search_price_rent') == '1' %}selected{% endif %}>Under {{ (1000 * USD_TO_INR) | inr }} / month</option>
+                    <option value="2" {% if search_params.get('search_price_rent') == '2' %}selected{% endif %}>{{ (1000 * USD_TO_INR) | inr }} - {{ (1800 * USD_TO_INR) | inr }} / month</option>
+                    <option value="3" {% if search_params.get('search_price_rent') == '3' %}selected{% endif %}>{{ (1800 * USD_TO_INR) | inr }} - {{ (2500 * USD_TO_INR) | inr }} / month</option>
+                    <option value="4" {% if search_params.get('search_price_rent') == '4' %}selected{% endif %}>Over {{ (2500 * USD_TO_INR) | inr }} / month</option>
                 </select>
             </div>
             <button type="submit" class="search-button">Search</button>
