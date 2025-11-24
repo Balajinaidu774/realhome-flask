@@ -678,6 +678,31 @@ def chat():
     data = request.get_json() or {}
     user_message = data.get('message', '').strip()
     response = get_chatbot_response(user_message)
+
+    # If user mentions a property id (e.g., "property 12" or "listing 5"), attach property details
+    try:
+        m = None
+        import re
+        m = re.search(r'property\s*(?:#|id)?\s*(\d+)', user_message.lower())
+        if not m:
+            m = re.search(r'listing\s*(?:#)?\s*(\d+)', user_message.lower())
+        if m:
+            pid = int(m.group(1))
+            prop = Property.query.get(pid)
+            if prop:
+                # Attach a compact property summary to the response
+                response['property'] = {
+                    'id': prop.id,
+                    'address': f"{prop.street_name}, Boston, MA",
+                    'price_sale': format_inr((prop.medv or 0) * 1000 * app.config['USD_TO_INR']),
+                    'price_rent': format_inr((prop.medv or 0) * 10 * app.config['USD_TO_INR'], per_month=True),
+                    'image_url': prop.image_url,
+                    'description': prop.description
+                }
+    except Exception:
+        # Do not fail chat if property lookup fails
+        pass
+
     return jsonify(response)
 
 # --- Run the Application ---

@@ -7,6 +7,17 @@ Can be extended to use LLM APIs like OpenAI or Hugging Face.
 import re
 from datetime import datetime
 import random
+import os
+
+# Optional ML intent classifier imports
+try:
+    import joblib
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.linear_model import LogisticRegression
+except Exception:
+    joblib = None
+    TfidfVectorizer = None
+    LogisticRegression = None
 
 
 # Property-related keywords for flexible matching
@@ -199,6 +210,19 @@ def match_intent(user_input: str) -> tuple:
     
     # Extract keywords for context
     keywords = extract_keywords(user_input)
+
+    # First try ML-based intent prediction (if available)
+    try:
+        if ML_AVAILABLE:
+            ml_intent, ml_conf = predict_intent_ml(user_input)
+            # Use ML prediction when confidence is reasonably high
+            if ml_intent and ml_conf >= ML_CONFIDENCE_THRESHOLD:
+                responses = INTENTS.get(ml_intent, {}).get('responses')
+                if responses:
+                    return ml_intent, random.choice(responses)
+    except Exception:
+        # Fall back to rule-based matching on any error
+        pass
     
     # Prioritize property-related intents if keywords match
     if keywords['property']:
@@ -274,3 +298,128 @@ def get_chatbot_response(user_message: str) -> dict:
         'user_input': user_message,
         'timestamp': datetime.utcnow().isoformat()
     }
+
+
+# ------------------ ML Intent Classifier Support ------------------
+# The classifier is optional: if scikit-learn and joblib are present it will
+# build a simple TF-IDF + LogisticRegression model from the intent patterns
+# and use it to predict intents. Training runs at import if no saved model.
+
+MODEL_PATH = os.path.join(os.path.dirname(__file__), 'chatbot_model.joblib')
+ML_AVAILABLE = (joblib is not None and TfidfVectorizer is not None and LogisticRegression is not None)
+ML_CONFIDENCE_THRESHOLD = 0.60
+
+def _clean_pattern_text(pat: str) -> str:
+    # Remove regex meta-characters to create a readable training example
+    s = re.sub(r'\\b', ' ', pat)
+    s = re.sub(r'[^A-Za-z0-9\s]', ' ', s)
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s.lower()
+
+def build_training_data():
+    X = []
+    y = []
+    for intent_name, intent_data in INTENTS.items():
+        # Use patterns (cleaned) as training examples
+        for pat in intent_data.get('patterns', []):
+            txt = _clean_pattern_text(pat)
+            if txt:
+                X.append(txt)
+                y.append(intent_name)
+        # Also add a few response samples to increase variety
+        for resp in intent_data.get('responses', [])[:2]:
+            X.append(re.sub(r'[^A-Za-z0-9\s]', ' ', resp).lower())
+            y.append(intent_name)
+    # Add curated user example phrases to improve classifier robustness
+    EXTRA_TRAIN_EXAMPLES = {
+        'greeting': [
+            'hello', 'hi there', 'hey', 'good morning', 'good evening'
+        ],
+        'property_search_buy': [
+            'show me homes to buy', 'i want to buy a house', 'properties for sale near me'
+        ],
+        'property_search_rent': [
+            'apartments for rent', 'looking to rent a flat', 'rental listings in bangalore'
+        ],
+        'property_details': [
+            'tell me about property 12', 'details for listing 5', 'what features does this property have'
+        ],
+        'valuation': [
+            'estimate the value', 'what is this property worth', 'valuation for my house'
+        ],
+        'contact_agent': [
+            'how do i contact the seller', 'contact agent for this listing', 'message the owner'
+        ],
+        'verification_quality': [
+            'is this property verified', 'provenance score for listing', 'how to verify property quality'
+        ],
+        'pricing_features': [
+            'what is the price range', 'is this expensive', 'affordable properties'
+        ],
+        'account_login': [
+            'how do i sign up', 'login issue', 'create an account'
+        ],
+        'general_help': [
+            'i need help', 'support', 'this is not working'
+        ],
+        'goodbye': [
+            'thanks', 'thank you', 'bye'
+        ]
+    }
+    for intent_name, examples in EXTRA_TRAIN_EXAMPLES.items():
+        for ex in examples:
+            X.append(ex.lower())
+            y.append(intent_name)
+    return X, y
+
+def train_and_save_model(path=MODEL_PATH):
+    if not ML_AVAILABLE:
+        return None
+    X, y = build_training_data()
+    if not X:
+        return None
+    vec = TfidfVectorizer(ngram_range=(1,2), max_features=2000)
+    Xv = vec.fit_transform(X)
+    clf = LogisticRegression(max_iter=400, random_state=42)
+    clf.fit(Xv, y)
+    obj = {'vectorizer': vec, 'clf': clf}
+    try:
+        joblib.dump(obj, path)
+    except Exception:
+        pass
+    return obj
+
+def load_model(path=MODEL_PATH):
+    if not ML_AVAILABLE:
+        return None
+    if os.path.exists(path):
+        try:
+            obj = joblib.load(path)
+            return obj
+        except Exception:
+            return None
+    return None
+
+_ML_OBJ = None
+if ML_AVAILABLE:
+    _ML_OBJ = load_model()
+    if _ML_OBJ is None:
+        # train and persist
+        _ML_OBJ = train_and_save_model()
+
+def predict_intent_ml(text: str):
+    """Return (intent, confidence) predicted by ML model, or (None, 0.0)."""
+    if not ML_AVAILABLE or not _ML_OBJ:
+        return None, 0.0
+    try:
+        vec = _ML_OBJ['vectorizer']
+        clf = _ML_OBJ['clf']
+        Xv = vec.transform([text])
+        probs = clf.predict_proba(Xv)[0]
+        labels = clf.classes_
+        idx = probs.argmax()
+        return labels[idx], float(probs[idx])
+    except Exception:
+        return None, 0.0
+
+# -----------------------------------------------------------------
